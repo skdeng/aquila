@@ -2,10 +2,11 @@
 #define _AQUILA_UTILS_TYPE_H_
 
 #include "glmath.h"
-#include "Shape.h"
 
 typedef vec2 Sample;
 typedef vec3 Color;
+
+class Primitive;
 
 class Transformation
 {
@@ -28,7 +29,28 @@ struct LocalGeo
 //! Intersection point information in world-space
 struct Intersection
 {
-	LocalGeo Geometry
+	LocalGeo Local;
 	Primitive* Object;
 };
+
+//! Bidirectional reflectance distribution function
+/*!
+	Not actual BRDF function
+*/
+struct BRDF
+{
+	//! Diffuse
+	Color kd;
+	//! Specular
+	Color ks;
+	//! Ambient
+	Color ka;
+	//! Reflectance coefficient
+	Color kr;
+
+	BRDF(){}
+	BRDF(Color aKD, Color aKS, Color aKA, Color aKR) :
+		kd(aKD), ks(aKS), ka(aKA), kr(aKR) {}
+};
+
 #endif

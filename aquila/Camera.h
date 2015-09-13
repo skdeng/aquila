@@ -1,9 +1,7 @@
 #ifndef _AQUILA_CAMERA_H_
 #define _AQUILA_CAMERA_H_
 
-#include "glmath.h"
-#include "Types.h"
-#include "Ray.h"
+#include "Common.h"
 
 class Camera
 {

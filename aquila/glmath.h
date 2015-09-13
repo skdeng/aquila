@@ -29,7 +29,7 @@ public:
 	vec2(const vec2 &u) : x(u.x), y(u.y){}
 	vec2& operator = (const vec2 &u){x = u.x; y = u.y; return *this;}
 	vec2 operator - (){return vec2(-x, -y);}
-	float* operator & (){return (float*)this;};
+	//float* operator & (){return (float*)this;};
 	vec2& operator += (float num){x += num; y += num; return *this;}
 	vec2& operator += (const vec2 &u){x += u.x; y += u.y; return *this;}
 	vec2& operator -= (float num){x -= num; y -= num; return *this;}
@@ -83,7 +83,7 @@ public:
 	vec3(const vec3 &u) : x(u.x), y(u.y), z(u.z){}
 	vec3& operator = (const vec3 &u){x = u.x; y = u.y; z = u.z; return *this;}
 	vec3 operator - (){return vec3(-x, -y, -z);}
-	float* operator & (){return (float*)this;}
+	//float* operator & (){return (float*)this;}
 	vec3& operator += (float num){x += num; y += num; z += num; return *this;}
 	vec3& operator += (const vec3 &u){x += u.x; y += u.y; z += u.z; return *this;}
 	vec3& operator -= (float num){x -= num; y -= num; z -= num; return *this;}

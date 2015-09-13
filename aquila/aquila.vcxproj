@@ -65,9 +65,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Values.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Light.h" />
-    <ClInclude Include="Ray.h" />
     <ClInclude Include="Raytracer.h" />
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="Shape.h" />
@@ -76,10 +82,12 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="glmath.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Raytracer.cpp" />
     <ClCompile Include="Sampler.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Types.cpp" />
   </ItemGroup>

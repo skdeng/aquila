@@ -12,10 +12,10 @@ Primitive::~Primitive()
 
 Triangle::Triangle()
 {
-
+	
 }
 
-Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const vec3& aColor)
+Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const Color& aColor)
 {
 	mA = aA;
 	mB = aB;
@@ -28,9 +28,19 @@ Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const vec3& a
 
 	mNormal = cross(mAC, mAB);
 	mNormal = normalize(mNormal);
+
+	mMaterial.kd = mColor;
+	mMaterial.ks = COLOR::WHITE;
+	mMaterial.ka = mColor * 0.1f;
+	mMaterial.kr = Color(0.2f, 0.2f, 0.2f);
 }
 
-bool Triangle::Intersect(const Ray& aRay, float* aT, LocalGeo* aGeometry)
+Triangle::~Triangle()
+{
+
+}
+
+bool Triangle::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 {
 	const vec3& RayOrigin = aRay.Pos;
 	const vec3& RayDir = aRay.Dir;
@@ -48,33 +58,44 @@ bool Triangle::Intersect(const Ray& aRay, float* aT, LocalGeo* aGeometry)
 	if (tmpT < aRay.TMin || tmpT > aRay.TMax)
 		return false;
 
+	//Compute intersection point by explicitly computing it using the shape formula
 	vec3 IntersectionPoint = RayOrigin + tmpT * RayDir;
 
 	//check if the intersection point with the plane is inside the triangle
 	if (!Inside(IntersectionPoint))
 		return false;
 
-	if (!aT)
+	//Save value to given buffer
+	if (aT != nullptr)
 	{
 		*aT = tmpT;
 	}
-	if (!aGeometry)
+	if (aIntersection != nullptr)
 	{
-		aGeometry->Pos = IntersectionPoint;
-		aGeometry->Normal = mNormal;
+		aIntersection->Local.Pos = IntersectionPoint;
+		aIntersection->Local.Normal = mNormal;
+
+		aIntersection->Object = this;
 	}
 
 	return true;
 }
 
+void Triangle::GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF)
+{
+	*aBRDF = mMaterial;
+}
+
 bool Triangle::Inside(const vec3& aPoint)
 {
-
+	//TODO
+	return true;
 }
 
 bool Triangle::Inside(const float afX, const float afY, const float afZ)
 {
-	
+	//TODO 
+	return true;
 }
 
 Sphere::Sphere()
@@ -93,7 +114,7 @@ Sphere::~Sphere()
 
 }
 
-bool Sphere::Intersect(const Ray& aRay, float* aT = nullptr, LocalGeo* aGeometry = nullptr)
+bool Sphere::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 {
 	//TODO
 	return true;

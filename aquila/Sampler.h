@@ -1,7 +1,7 @@
 #ifndef _AQUILA_SAMPLER_H_
 #define _AQUILA_SAMPLER_H_
 
-#include "Types.h"
+#include "Common.h"
 
 class Sampler
 {
@@ -24,7 +24,7 @@ public:
 
 private:
 	int mScreenHeight, mScreenWidth;
-	int mCurrentX, mCurrentY;
+	float mCurrentX, mCurrentY;
 };
 
 #endif

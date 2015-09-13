@@ -2,6 +2,9 @@
 
 Sampler::Sampler()
 {
+	mScreenWidth = CONSTANT::IMAGE_WIDTH;
+	mScreenHeight = CONSTANT::IMAGE_HEIGHT;
+
 	mCurrentX = 0;
 	mCurrentY = 0;
 }

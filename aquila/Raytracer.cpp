@@ -2,37 +2,68 @@
 
 Raytracer::Raytracer()
 {
-	mMaxDepth = 1000.0;
+	mScene.InitScene();
 }
 
 Raytracer::~Raytracer()
 {
-
 }
 
 void Raytracer::Trace(const Ray& aRay, int aDepth, Color* aColor)
 {
-	if (aDepth > mMaxDepth)
+	PARANOID_PTR_CHECK(aColor, "RayTracer::Trace - aColor null pointer");
+
+	//if depth exceed threshold
+	if (aDepth > CONSTANT::SCENE_MAX_DEPTH)
 	{
-		*aColor = Color(0, 0, 0);
+		*aColor = COLOR::BLACK;
 		return;
 	}
 
-	bool Intersect = false;
 	float T;
-	LocalGeo Geometry;
-	for (int i = 0; i < mScene.size(); i++)
+	Intersection RayIntersection;
+	if (!mScene.Intersect(aRay, &T, &RayIntersection))
 	{
-		if (mScene[i].Intersect(aRay, &T, &Geometry))
+		*aColor = COLOR::BLACK;
+		return;
+	}
+
+	BRDF IntersectionBRDF;
+	RayIntersection.Object->GetBRDF(RayIntersection.Local, &IntersectionBRDF);
+
+	for (Light* light : mScene.GetLights())
+	{
+		Ray LightRay;
+		Color LightColor;
+		light->GenerateLightRay(RayIntersection.Local, &LightRay, &LightColor);
+		if (!mScene.Intersect(LightRay))
 		{
-			Intersect = true;
+			*aColor += Shade(RayIntersection.Local, IntersectionBRDF, LightRay, LightColor, light->GetType());
+		}
+	}
+
+	//TODO handle reflection
+}
+
+Color Raytracer::Shade(const LocalGeo& aLocal, const BRDF& aBRDF, const Ray& aLightRay, const Color& aLightColor, const Light::LIGHT_TYPE aLightType)
+{
+	Color DiffuseColor, SpecularColor, AmbientColor;
+
+	switch (aLightType)
+	{
+		case Light::DIRECTIONAL:
+		{
+			//Directional light
+			float DiffuseIntensity = Utils::Clamp(dot(aLocal.Normal, aLightRay.Dir), 0.0f, 1.0f);
+			DiffuseColor = aLightColor * DiffuseIntensity * aBRDF.kd;
+
+			//Ambient light
+			AmbientColor = aLightColor * aBRDF.ka;
+
+			//Specular light
 			break;
 		}
 	}
 
-	if (!Intersect)
-	{
-		*aColor = Color(0, 0, 0);
-		return;
-	}
+	return DiffuseColor + SpecularColor + AmbientColor;
 }

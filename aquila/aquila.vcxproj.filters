@@ -27,9 +27,6 @@
     <ClInclude Include="glmath.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="Ray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Types.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
@@ -44,6 +41,27 @@
     </ClInclude>
     <ClInclude Include="Shape.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Values.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +87,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Raytracer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

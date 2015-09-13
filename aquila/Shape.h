@@ -1,8 +1,7 @@
 #ifndef _AQUILA_SHAPE_H_
 #define _AQUILA_SHAPE_H_
 
-#include "Ray.h"
-#include "Types.h"
+#include "Common.h"
 
 //! Abstract class for all primitives
 class Primitive
@@ -11,7 +10,12 @@ public:
 	Primitive();
 	virtual ~Primitive();
 
-	virtual bool Intersect(const Ray& aRay, float* aT, LocalGeo* aGeometry) = 0;
+	virtual bool Intersect(const Ray& aRay, float* aT, Intersection* aIntersection) = 0;
+	virtual void GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF) = 0;
+
+protected:
+	//TODO use material for texture
+	BRDF mMaterial;
 };
 
 //! Triangles, derived from Primitive
@@ -19,11 +23,13 @@ class Triangle : public Primitive
 {
 public:
 	Triangle();
-	Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const vec3& aColor);
+	Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const Color& aColor);
 	~Triangle();
 
-	bool Intersect(const Ray& aRay, float* aT = nullptr, LocalGeo* aGeometry = nullptr);
+	bool Intersect(const Ray& aRay, float* aT = nullptr, Intersection* aIntersection = nullptr);
+	void GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF);
 
+private:
 	bool Inside(const float afX, const float afY, const float afZ);
 	bool Inside(const vec3& aPoint);
 
@@ -41,7 +47,7 @@ public:
 	Sphere(const vec3& aCenter, const float aRadius);
 	~Sphere();
 
-	bool Intersect(const Ray& aRay, float* aT = nullptr, LocalGeo* aGeometry = nullptr);
+	bool Intersect(const Ray& aRay, float* aT = nullptr, Intersection* aIntersection = nullptr);
 
 private:
 	vec3 mCenter;
