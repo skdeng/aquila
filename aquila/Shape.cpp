@@ -88,14 +88,21 @@ void Triangle::GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF)
 
 bool Triangle::Inside(const vec3& aPoint)
 {
-	//TODO
+	float bU, bV, bW;
+	Barycentric(aPoint, mA, mB, mC, &bU, &bV, &bW);
+	DEBUG_LOG("Barycentric: (" + std::to_string(bU) + "," + std::to_string(bV) + "," + std::to_string(bW) + ")");
+	if (bU < 0.0f || bU > 1.0f ||
+		bV < 0.0f || bV > 1.0f ||
+		bW < 0.0f || bW > 1.0f)
+	{
+		return false;
+	}
 	return true;
 }
 
 bool Triangle::Inside(const float afX, const float afY, const float afZ)
 {
-	//TODO 
-	return true;
+	return Inside(vec3(afX, afY, afZ));
 }
 
 Sphere::Sphere()

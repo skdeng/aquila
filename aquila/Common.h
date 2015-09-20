@@ -8,15 +8,17 @@
 #include "Ray.h"
 
 #define AQ_DEBUG
-#define AQ_PARANOID1
+#define AQ_PARANOID
 
 #ifdef AQ_DEBUG
 	#include <iostream>
-	#define DEBUG_LOG std::cout
+	#define DEBUG_LOG(s) std::cout << s << std::endl
+#else
+	#define DEBUG_LOG
 #endif
 
 #ifdef AQ_PARANOID
-	#define PARANOID_PTR_CHECK(ptr, s) if (ptr == nullptr) { DEBUG_LOG << s << std::endl; return; }
+	#define PARANOID_PTR_CHECK(ptr, s) if (ptr == nullptr) { DEBUG_LOG(s); return; }
 #else
 	#define PARANOID_PTR_CHECK 
 #endif
