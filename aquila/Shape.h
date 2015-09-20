@@ -33,23 +33,23 @@ private:
 	bool Inside(const float afX, const float afY, const float afZ);
 	bool Inside(const vec3& aPoint);
 
-	void Barycentric(const vec3 &p, const vec3 &a, const vec3 &b, const vec3 &c, float *u, float *v, float *w)
+	void Barycentric(const vec3 &aP, vec3* aBP)
 	{
-		vec3 v0 = b - a, v1 = c - a, v2 = p - a;
-		float d00 = dot(v0, v0);
-		float d01 = dot(v0, v1);
-		float d11 = dot(v1, v1);
-		float d20 = dot(v2, v0);
-		float d21 = dot(v2, v1);
+		vec3 PA = aP - mA;
+		float d00 = dot(mAB, mAB);
+		float d01 = dot(mAB, mAC);
+		float d11 = dot(mAC, mAC);
+		float d20 = dot(PA, mAB);
+		float d21 = dot(PA, mAC);
 		float denom = d00 * d11 - d01 * d01;
-		*v = (d11 * d20 - d01 * d21) / denom;
-		*w = (d00 * d21 - d01 * d20) / denom;
-		*u = 1.0f - *v - *w;
+		aBP->y = (d11 * d20 - d01 * d21) / denom;
+		aBP->z = (d00 * d21 - d01 * d20) / denom;
+		aBP->x = 1.0f - aBP->y - aBP->z;
 	}
 
 private:
 	vec3 mA, mB, mC;
-	vec3 mAB, mAC, mBC;
+	vec3 mAB, mAC;
 	vec3 mColor;
 	vec3 mNormal;	//normal to the plane
 };

@@ -24,7 +24,6 @@ Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const Color& 
 
 	mAB = aB - aA;
 	mAC = aC - aA;
-	mBC = aC - aB;
 
 	mNormal = cross(mAC, mAB);
 	mNormal = normalize(mNormal);
@@ -88,12 +87,12 @@ void Triangle::GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF)
 
 bool Triangle::Inside(const vec3& aPoint)
 {
-	float bU, bV, bW;
-	Barycentric(aPoint, mA, mB, mC, &bU, &bV, &bW);
-	DEBUG_LOG("Barycentric: (" + std::to_string(bU) + "," + std::to_string(bV) + "," + std::to_string(bW) + ")");
-	if (bU < 0.0f || bU > 1.0f ||
-		bV < 0.0f || bV > 1.0f ||
-		bW < 0.0f || bW > 1.0f)
+	vec3 BarycentricPoint;
+	Barycentric(aPoint, &BarycentricPoint);
+	DEBUG_LOG("Barycentric: (" + std::to_string(BarycentricPoint.x) + "," + std::to_string(BarycentricPoint.y) + "," + std::to_string(BarycentricPoint.z) + ")");
+	if (BarycentricPoint.x < 0.0f || BarycentricPoint.x > 1.0f ||
+		BarycentricPoint.y < 0.0f || BarycentricPoint.y > 1.0f ||
+		BarycentricPoint.z < 0.0f || BarycentricPoint.z > 1.0f)
 	{
 		return false;
 	}
