@@ -3,11 +3,12 @@
 
 #include "Common.h"
 #include "Windows.h"
+#include "Image.h"
 
 class Wnd
 {
 public:
-	Wnd();
+	Wnd(const Image* aImage);
 	Wnd(WNDPROC aWndProc);
 	void SetCallBack(WNDPROC aWndProc);
 
@@ -21,11 +22,13 @@ public:
 	//void OnKeyDown(unsigned int aKey);
 	//void OnMouseMove(int aX, int aY);
 	//void OnMouseWheel(int aZ);
-	//void OnPaint();
+	void OnPaint();
 	//void OnLButtonDown(int aX, int aY);
 	//void OnResize();
 
 private:
+	const Image* mImage;
+
 	std::string mWindowName;
 	HWND mhWnd;
 	int mWidth, mHeight, mX, mY, mLastX, mLastY;

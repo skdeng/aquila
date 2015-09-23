@@ -1,5 +1,10 @@
 #include "Wnd.h"
 
+Wnd::Wnd(const Image* aImage)
+{
+	mImage = aImage;
+}
+
 bool Wnd::Create(HINSTANCE hInstance, std::string aWindowName, int aWidth, int aHeight)
 {
 	WNDCLASSEX WndClassEx;
@@ -81,7 +86,13 @@ void Wnd::Destroy()
 	DestroyWindow(mhWnd);
 }
 
-void Wnd::OnKeyDown(unsigned int aKey)
+void Wnd::OnPaint()
 {
+	PAINTSTRUCT ps;
+	HDC hDC = BeginPaint(mhWnd, &ps);
 
+	static DWORD Start;
+	static bool Tracing = false;
+
+	
 }

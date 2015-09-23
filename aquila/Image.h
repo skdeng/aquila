@@ -3,6 +3,10 @@
 
 #include "Common.h"
 
+#ifdef _WIN32 
+#include <Windows.h>
+#endif
+
 class Image
 {
 public:
@@ -16,11 +20,25 @@ public:
 	void DumpImage() const;
 	Color** GetBuffer() const;
 #endif
+
+private:
+	//private member functions
+	void InitBufferInfo();
 	
 private:
 	Color** mColorBuffer;
+
 	unsigned int mWidth;
 	unsigned int mHeight;
+
+#ifdef _WIN32
+public:
+	void SwapBuffer(HDC ahDC);
+private:
+	BYTE* mWinBuffer;
+	BYTE* GetWinBuffer();
+	BITMAPINFO mColorBufferInfo;
+#endif
 };
 
 #endif

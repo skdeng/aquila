@@ -72,6 +72,9 @@
     <ClInclude Include="Wnd.h">
       <Filter>Header Files\IO</Filter>
     </ClInclude>
+    <ClInclude Include="Main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glmath.cpp">
