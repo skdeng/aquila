@@ -23,8 +23,8 @@ void Camera::GetRay(const Sample& aSample, Ray* aRay, double offsetX, double off
 {
 	double fovX = mFOV * mScreenWidth / mScreenHeight;
 	
-	double thetaX = std::tan(Utils::DegToRad(fovX) / 2.0);
-	double thetaY = std::tan(Utils::DegToRad(mFOV) / 2.0);
+	double thetaX = std::tan(mFOV / 2.0);
+	double thetaY = std::tan(mFOV / 2.0);
 	double halfWidth = mScreenWidth / 2.0;
 	double halfHeight = mScreenHeight / 2.0;
 	double alpha = thetaX * ((aSample.x + offsetX) - halfWidth) / halfWidth;

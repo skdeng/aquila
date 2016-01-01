@@ -151,6 +151,7 @@ bool Sphere::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 		aIntersection->Local.Normal = normalize(aIntersection->Local.Normal);
 		aIntersection->Material = mMaterial;
 	}
+
 	return true;
 }
 

@@ -40,7 +40,7 @@ void Raytracer::SetScene(Scene* aScene)
 	mScene = std::unique_ptr<Scene>(aScene);
 }
 
-Color Raytracer::Shade(const LocalGeo& aLocal, const BRDF& aBRDF, const Ray& aLightRay, const Color& aLightColor, const Light::LIGHT_TYPE aLightType)
+Color Raytracer::Shade(const LocalGeo& aLocal, const BRDF& aBRDF, const Ray& aLightRay, const Color& aLightColor, const Light::LightType aLightType)
 {
 	Color DiffuseColor, SpecularColor, AmbientColor;
 
