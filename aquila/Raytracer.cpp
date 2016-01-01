@@ -2,47 +2,42 @@
 
 Raytracer::Raytracer()
 {
-	mScene.InitScene();
 }
 
 Raytracer::~Raytracer()
 {
 }
 
-void Raytracer::Trace(const Ray& aRay, int aDepth, Color* aColor)
+void Raytracer::Trace(const Ray& aRay, Color* aColor)
 {
-	PARANOID_PTR_CHECK(aColor, "RayTracer::Trace - aColor null pointer");
-
-	//if depth exceed threshold
-	if (aDepth > CONSTANT::SCENE_MAX_DEPTH)
-	{
-		*aColor = COLOR::BLACK;
-		return;
-	}
-
 	float T;
 	Intersection RayIntersection;
-	if (!mScene.Intersect(aRay, &T, &RayIntersection))
+	if (!mScene->Intersect(aRay, &T, &RayIntersection))
 	{
 		*aColor = COLOR::BLACK;
 		return;
 	}
+	
+	*aColor = RayIntersection.Material.kd;
 
-	BRDF IntersectionBRDF;
-	RayIntersection.Object->GetBRDF(RayIntersection.Local, &IntersectionBRDF);
-
-	for (Light* light : mScene.GetLights())
-	{
-		Ray LightRay;
-		Color LightColor;
-		light->GenerateLightRay(RayIntersection.Local, &LightRay, &LightColor);
-		if (!mScene.Intersect(LightRay))
-		{
-			*aColor += Shade(RayIntersection.Local, IntersectionBRDF, LightRay, LightColor, light->GetType());
-		}
-	}
+	//std::cout << std::string(RayIntersection.Material.kd) << std::endl;
+	//for (Light* light : mScene.GetLights())
+	//{
+	//	Ray LightRay;
+	//	Color LightColor;
+	//	light->GenerateLightRay(RayIntersection.Local, &LightRay, &LightColor);
+	//	if (!mScene.Intersect(LightRay, nullptr, nullptr))
+	//	{
+	//		*aColor += Shade(RayIntersection.Local, IntersectionBRDF, LightRay, LightColor, light->GetType());
+	//	}
+	//}
 
 	//TODO handle reflection
+}
+
+void Raytracer::SetScene(Scene* aScene)
+{
+	mScene = std::unique_ptr<Scene>(aScene);
 }
 
 Color Raytracer::Shade(const LocalGeo& aLocal, const BRDF& aBRDF, const Ray& aLightRay, const Color& aLightColor, const Light::LIGHT_TYPE aLightType)

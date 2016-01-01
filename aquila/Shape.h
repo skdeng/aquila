@@ -57,11 +57,11 @@ private:
 class Sphere : public Primitive
 {
 public:
-	Sphere();
-	Sphere(const vec3& aCenter, const float aRadius);
+	Sphere(const vec3& aCenter, const float aRadius, const BRDF& aMaterial);
 	~Sphere();
 
 	bool Intersect(const Ray& aRay, float* aT = nullptr, Intersection* aIntersection = nullptr);
+	void GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF);
 
 private:
 	vec3 mCenter;

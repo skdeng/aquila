@@ -1,22 +1,23 @@
 #include "Image.h"
 
-Image::Image()
-{
-}
-
-Image::Image(const unsigned int aWidth, const unsigned int aHeight)
+Image::Image(SDL_Renderer* aRenderer, const unsigned int aWidth, const unsigned int aHeight)
 {
 	mWidth = aWidth;
 	mHeight = aHeight;
-	mColorBuffer = new Color*[mHeight];
+	mColorBuffer = new uint32_t*[mHeight];
 	for (unsigned int i = 0; i < mHeight; i++)
 	{
-		mColorBuffer[i] = new Color[mHeight];
+		mColorBuffer[i] = new uint32_t[mWidth];
 	}
+
+	mRenderer = aRenderer;
+	mTexture = SDL_CreateTexture(mRenderer, SDL_PIXELFORMAT_RGBA4444, SDL_TEXTUREACCESS_STREAMING, mWidth, mHeight);
 }
 
 Image::~Image()
 {
+	SDL_DestroyTexture(mTexture);
+
 	if (mColorBuffer != nullptr)
 	{
 		for (unsigned int i = 0; i < mHeight; i++)
@@ -32,67 +33,46 @@ Image::~Image()
 	}
 }
 
-void Image::Commit(const Sample& aSample, const Color aColor)
+void Image::Commit(const Sample& aSample, const Color& aColor)
 {
-	mColorBuffer[(unsigned int)aSample.x][(unsigned int)aSample.y] = aColor;
+	mColorBuffer[(unsigned int)aSample.y][(unsigned int)aSample.x] = ColorToRGBA(aColor);
 }
 
-void Image::InitBufferInfo()
+void Image::Update(const Sample& aSample)
 {
-#ifdef _WIN32
-	memset(&mColorBufferInfo, 0, sizeof(BITMAPINFOHEADER));
-	mColorBufferInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	mColorBufferInfo.bmiHeader.biPlanes = 1;
-	mColorBufferInfo.bmiHeader.biBitCount = 24;
-	mColorBufferInfo.bmiHeader.biCompression = BI_RGB;
-	mColorBufferInfo.bmiHeader.biWidth = mWidth;
-	mColorBufferInfo.bmiHeader.biHeight = mHeight;
-#endif
-}
+	SDL_Rect updateRect;
+	updateRect.x = aSample.x;
+	updateRect.y = aSample.y;
+	updateRect.w = updateRect.h = 1;
+	SDL_LockTexture(mTexture, &updateRect, (void**)(mColorBuffer + updateRect.y * mWidth + updateRect.x), 0);
+	SDL_UnlockTexture(mTexture);
 
-#ifdef _WIN32
-void Image::SwapBuffer(HDC ahDC)
-{
-	if (mColorBuffer != nullptr)
+	SDL_RenderCopy(mRenderer, mTexture, NULL, NULL);
+
+	for (unsigned int i = 0; i < mHeight; i++)
 	{
-		BYTE* WinBuffer = GetWinBuffer();
-		StretchDIBits(ahDC, 0, 0, mWidth, mHeight, 0, 0, mWidth, mHeight, GetWinBuffer(), &mColorBufferInfo, DIB_RGB_COLORS, SRCCOPY);
-	}
-}
-BYTE* Image::GetWinBuffer()
-{
-	if ()
-	BYTE* itr;
-	for (unsigned int i = 0; i < mWidth; i++)
-	{
-		for (unsigned int j = 0; j < mHeight; j++)
+		for (unsigned int j = 0; j < mWidth; j++)
 		{
-			itr = Buffer + (mWidth * j + i) * 3;
-			itr[0] = mColorBuffer[i][j].r;
-			itr[1] = mColorBuffer[i][j].g;
-			itr[2] = mColorBuffer[i][j].b;
+			if (mColorBuffer[i][j] > 0xFF)
+			{
+				std::cout << mColorBuffer[i][j] << std::endl;
+			}
 		}
 	}
-	return Buffer;
-}
-#endif
-
-#ifdef AQ_DEBUG
-void Image::DumpImage() const
-{
-	std::cout << "Image:" << std::endl;
-	for (unsigned int y = 0; y < mHeight; y++)
-	{
-		for (unsigned int x = 0; x < mWidth; x++)
-		{
-			printf("(%1.1f,%1.1f,%1.1f) ", mColorBuffer[x][y].r, mColorBuffer[x][y].g, mColorBuffer[x][y].b);
-		}
-		std::cout << std::endl;
-	}
 }
 
-Color** Image::GetBuffer() const
+void Image::SetRenderer(SDL_Renderer* aRenderer)
 {
-	return mColorBuffer;
+	mRenderer = aRenderer;
 }
-#endif
+
+uint32_t Image::ColorToRGBA(const Color& aColor)
+{
+	uint32_t rgba = 0;
+	rgba += ((unsigned int)(aColor.r * 0xFF)) << 24;
+	rgba += ((unsigned int)(aColor.b * 0xFF)) << 16;
+	rgba += ((unsigned int)(aColor.g * 0xFF)) << 8;
+	rgba += 0xFF;
+
+	return rgba;
+}

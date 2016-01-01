@@ -73,7 +73,7 @@ bool Triangle::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection
 	{
 		aIntersection->Local.Pos = IntersectionPoint;
 		aIntersection->Local.Normal = mNormal;
-
+		aIntersection->Material = mMaterial;
 		aIntersection->Object = this;
 	}
 
@@ -104,15 +104,11 @@ bool Triangle::Inside(const float afX, const float afY, const float afZ)
 	return Inside(vec3(afX, afY, afZ));
 }
 
-Sphere::Sphere()
-{
-
-}
-
-Sphere::Sphere(const vec3& aCenter, const float aRadius)
+Sphere::Sphere(const vec3& aCenter, const float aRadius, const BRDF& aMaterial)
 {
 	mCenter = aCenter;
 	mRadius = aRadius;
+	mMaterial = aMaterial;
 }
 
 Sphere::~Sphere()
@@ -122,6 +118,43 @@ Sphere::~Sphere()
 
 bool Sphere::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 {
-	//TODO
+	vec3 oc = aRay.Pos - mCenter;
+
+	float det = std::pow(dot(aRay.Dir, oc), 2) - std::pow(length(oc), 2) + (mRadius * mRadius);
+
+	//no intersection
+	if (det < 0)
+		return false;
+
+	float tmpT = -dot(aRay.Dir, oc);
+
+	//determinant larger than zero => 2 intersections
+	if (det > 0)
+	{
+		float sqrtdet = std::sqrt(det);
+		//find the closest intersection
+		if (sqrtdet > tmpT)
+			tmpT += sqrtdet;
+		else
+			tmpT -= sqrtdet;
+	}
+	
+	if (aT)
+	{
+		*aT = tmpT;
+	}
+	if (aIntersection)
+	{
+		aIntersection->Object = this;
+		aIntersection->Local.Pos = aRay.Pos + tmpT * aRay.Dir;
+		aIntersection->Local.Normal = aIntersection->Local.Pos - mCenter;
+		aIntersection->Local.Normal = normalize(aIntersection->Local.Normal);
+		aIntersection->Material = mMaterial;
+	}
 	return true;
+}
+
+void Sphere::GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF)
+{
+	aBRDF = &mMaterial;
 }

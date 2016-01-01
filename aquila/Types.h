@@ -26,13 +26,6 @@ struct LocalGeo
 	vec3 Normal;
 };
 
-//! Intersection point information in world-space
-struct Intersection
-{
-	LocalGeo Local;
-	Primitive* Object;
-};
-
 //! Bidirectional reflectance distribution function
 /*!
 	Not actual BRDF function
@@ -51,6 +44,14 @@ struct BRDF
 	BRDF(){}
 	BRDF(Color aKD, Color aKS, Color aKA, Color aKR) :
 		kd(aKD), ks(aKS), ka(aKA), kr(aKR) {}
+};
+
+//! Intersection point information in world-space
+struct Intersection
+{
+	LocalGeo Local;
+	BRDF Material;
+	Primitive* Object = nullptr;
 };
 
 #endif

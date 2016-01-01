@@ -14,13 +14,14 @@ public:
 	Raytracer();
 	~Raytracer();
 
-	void Trace(const Ray& aRay, int aDepth, Color* aColor);
+	void Trace(const Ray& aRay, Color* aColor);
+	void SetScene(Scene* aScene);
 
 private:
 	Color Shade(const LocalGeo& aLocal, const BRDF& aBRDF, const Ray& aLightRay, const Color& aLightColor, const Light::LIGHT_TYPE aLightType);
 
 private:
-	Scene mScene;
+	std::unique_ptr<Scene> mScene;
 };
 
 #endif

@@ -1,31 +1,109 @@
-#include "Sampler.h"
-#include "Camera.h"
-#include "Raytracer.h"
-#include "Image.h"
-#include "Wnd.h"
+#include "Main.h"
 
-#include <iostream>
+Main Main::Instance;
 
-int main()
+Main::Main()
 {
-	Sampler sp;
-	Camera cam(vec3(0,0,5), vec3(0,0,-1), vec3(0,1,0), 45.0f, CONSTANT::IMAGE_WIDTH, CONSTANT::IMAGE_HEIGHT);
-	Raytracer rt;
-	Image image(CONSTANT::IMAGE_WIDTH, CONSTANT::IMAGE_HEIGHT);
-	Wnd Window;
-	Sample s;
-	while (sp.GetSample(&s))
+	mRunning = true;
+}
+
+Main::~Main()
+{
+
+}
+
+int Main::Execute()
+{
+	if (!OnInit())
 	{
-		Ray r;
-		Color c;
-		cam.GetRay(s, &r);
-		rt.Trace(r, 0, &c);
-		image.Commit(s, c);
+		return -1;
 	}
 
-	image.DumpImage();
+	SDL_Event e;
 
-	int tmp;
-	std::cin >> tmp;
+	while (mRunning)
+	{
+		while (SDL_PollEvent(&e))
+		{
+			OnEvent(e);
+		}
+
+		OnUpdate();
+		OnRender();
+	}
+
 	return 0;
+}
+
+bool Main::OnInit()
+{
+	//Initialize SDL system
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	{
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "SDL initiation error", SDL_GetError(), NULL);
+		return false;
+	}
+
+#if _DEBUG
+	//Enable console output
+	freopen("CON", "w", stdout); // redirects stdout
+	freopen("CON", "w", stderr); // redirects stderr
+#endif
+
+	//Create window
+	mWindow = SDL_CreateWindow(CONSTANT::WINDOW_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, CONSTANT::IMAGE_WIDTH, CONSTANT::IMAGE_HEIGHT, SDL_WINDOW_SHOWN);
+	if (mWindow == NULL)
+	{
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Window creation error", SDL_GetError(), NULL);
+		return false;
+	}
+
+	//Setup renderer
+	if ((mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_SOFTWARE)) == NULL)
+	{
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Renderer creation error", SDL_GetError(), NULL);
+		return false;
+	}
+	SDL_SetRenderDrawColor(mRenderer, 0, 0, 255, 255);
+
+	return SetupRaytracer();
+}
+
+bool Main::SetupRaytracer()
+{
+	mCamera = std::make_unique<Camera>(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, -1.0f), vec3(0.0f, 1.0f, 0.0f), 45.0f, CONSTANT::IMAGE_WIDTH, CONSTANT::IMAGE_HEIGHT);
+	mScene.InitScene();
+	mRaytracer.SetScene(&mScene);
+	mImage = std::make_unique<Image>(mRenderer, CONSTANT::IMAGE_WIDTH, CONSTANT::IMAGE_HEIGHT);
+
+	return true;
+}
+
+void Main::OnEvent(const SDL_Event& e)
+{
+	if (e.type == SDL_QUIT)	mRunning = false;
+}
+
+void Main::OnUpdate()
+{
+	Sample sample;
+	Ray eyeRay;
+	Color color;
+	while (mSampler.GetSample(&sample))
+	{
+		mCamera->GetRay(sample, &eyeRay, 0, 0);
+		mRaytracer.Trace(eyeRay, &color);
+		mImage->Commit(sample, color);
+		SDL_RenderPresent(mRenderer);
+	}
+}
+
+void Main::OnRender()
+{
+
+}
+
+int main(int argc, char** argv)
+{
+	return Main::Instance.Execute();
 }

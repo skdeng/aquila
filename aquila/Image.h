@@ -3,42 +3,30 @@
 
 #include "Common.h"
 
-#ifdef _WIN32 
-#include <Windows.h>
-#endif
+#include <SDL.h>
 
 class Image
 {
 public:
-	Image();
-	Image(const unsigned int aWidth, const unsigned int aHeight);
+	Image(SDL_Renderer* aRenderer, const unsigned int aWidth, const unsigned int aHeight);
 	~Image();
 	
-	void Commit(const Sample& aSample, const Color aColor);
+	void Commit(const Sample& aSample, const Color& aColor);
+	void Update(const Sample& aSample);
 
-#ifdef AQ_DEBUG
-	void DumpImage() const;
-	Color** GetBuffer() const;
-#endif
+	void SetRenderer(SDL_Renderer* aRenderer);
 
 private:
-	//private member functions
-	void InitBufferInfo();
-	
+	inline uint32_t ColorToRGBA(const Color& aColor);
+
 private:
-	Color** mColorBuffer;
+	uint32_t** mColorBuffer;
 
 	unsigned int mWidth;
 	unsigned int mHeight;
 
-#ifdef _WIN32
-public:
-	void SwapBuffer(HDC ahDC);
-private:
-	BYTE* mWinBuffer;
-	BYTE* GetWinBuffer();
-	BITMAPINFO mColorBufferInfo;
-#endif
+	SDL_Renderer* mRenderer;
+	SDL_Texture* mTexture;
 };
 
 #endif

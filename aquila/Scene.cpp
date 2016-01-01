@@ -7,15 +7,15 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	for (unsigned int i = 0; i < mScene.size(); i++)
+	for (unsigned int i = 0; i < mSceneObjects.size(); i++)
 	{
-		if (mScene[i] != nullptr)
+		if (mSceneObjects[i] != nullptr)
 		{
-			delete mScene[i];
-			mScene[i] = nullptr;
+			delete mSceneObjects[i];
+			mSceneObjects[i] = nullptr;
 		}
 	}
-	mScene.clear();
+	mSceneObjects.clear();
 
 	for (unsigned int i = 0; i < mLights.size(); i++)
 	{
@@ -30,21 +30,44 @@ Scene::~Scene()
 
 void Scene::InitScene()
 {
-	mScene.push_back(new Triangle(vec3(1, 0, 0), vec3(0, 1, 0), vec3(-1, 0, 0), Color(0.5f, 0.1f, 0.8f)));
+	mSceneObjects.push_back(new Sphere(vec3(0, 0, 0), 2.0, BRDF(COLOR::RED, COLOR::GREEN, COLOR::BLUE, Color(1, 0, 0))));
 
 	mLights.push_back(new DirectionalLight(Color(1.0f, 1.0f, 0.8f), vec3(-1.0f, -1.0f, 1.0f), 0.2f));
 }
 
 bool Scene::Intersect(const Ray& aRay, float *aT, Intersection* aIntersection)
 {
-	//For now, check the whole scene
+	bool intersect = false;
+
+	if (aT) *aT = std::numeric_limits<float>::infinity();
+
 	//TODO use acceleration structure
-	for (unsigned int i = 0; i < mScene.size(); i++)
+	for (unsigned int i = 0; i < mSceneObjects.size(); i++)
 	{
-		if (mScene[i]->Intersect(aRay, aT, aIntersection))
+		float tmpT;
+		Intersection tmpIntersection;
+		if (mSceneObjects[i]->Intersect(aRay, &tmpT, &tmpIntersection))
 		{
-			return true;
+			if (aT)
+			{
+				if (tmpT < *aT)
+				{
+					*aT = tmpT;
+					if (aIntersection)
+					{
+						*aIntersection = tmpIntersection;
+					}
+				}
+			}
+			else
+			{
+				if (aIntersection)
+				{
+					*aIntersection = tmpIntersection;
+				}
+			}
+			intersect = true;
 		}
 	}
-	return false;
+	return intersect;
 }

@@ -6,7 +6,7 @@
 class Light
 {
 public:
-	static enum LIGHT_TYPE
+	static enum LightType
 	{
 		DIRECTIONAL,
 		POINT,
@@ -17,7 +17,7 @@ public:
 	virtual ~Light();
 
 	virtual void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor) = 0;
-	virtual const LIGHT_TYPE GetType() = 0;
+	virtual const LightType GetType() = 0;
 protected:
 	vec3 mColor;
 	float mIntensity;
@@ -31,13 +31,13 @@ public:
 	~DirectionalLight();
 
 	void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor);
-	const LIGHT_TYPE GetType()
+	const LightType GetType()
 	{
 		return mType;
 	}
 private:
 	vec3 mDirection;
-	const LIGHT_TYPE mType = DIRECTIONAL;
+	const LightType mType = DIRECTIONAL;
 };
 
 class PointLight : public Light
@@ -48,13 +48,13 @@ public:
 	~PointLight();
 
 	void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor);
-	const LIGHT_TYPE GetType()
+	const LightType GetType()
 	{
 		return mType;
 	}
 private:
 	vec3 mPosition;
-	const LIGHT_TYPE mType = POINT;
+	const LightType mType = POINT;
 };
 
 #endif

@@ -50,7 +50,8 @@ public:
 	friend vec2 operator / (const vec2 &u, float num){return vec2(u.x / num, u.y / num);}
 	friend vec2 operator / (float num, const vec2 &u){return vec2(num / u.x, num / u.y);}
 	friend vec2 operator / (const vec2 &u, const vec2 &v){return vec2(u.x / v.x, u.y / v.y);}
-	//casting operator
+	
+	//Shao Kun Deng
 	operator std::string() const { return "("+std::to_string(x)+","+std::to_string(y)+")"; }
 };
 
@@ -104,7 +105,8 @@ public:
 	friend vec3 operator / (const vec3 &u, float num){return vec3(u.x / num, u.y / num, u.z / num);}
 	friend vec3 operator / (float num, const vec3 &u){return vec3(num / u.x, num / u.y, num / u.z);}
 	friend vec3 operator / (const vec3 &u, const vec3 &v){return vec3(u.x / v.x, u.y / v.y, u.z / v.z);}
-	//casting operator
+	
+	//Shao Kun Deng
 	operator std::string() const { return "(" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + ")"; }
 };
 

@@ -25,6 +25,12 @@
     <Filter Include="Source Files\IO">
       <UniqueIdentifier>{18bc73e9-488c-4ed6-9092-bb8de787ea5d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Main">
+      <UniqueIdentifier>{f2bfae16-41df-4948-b0f4-1c78f385a4e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Main">
+      <UniqueIdentifier>{bbd98789-5204-4bdf-bbf6-e16ec58c771f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -66,13 +72,13 @@
     <ClInclude Include="Utils.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="Ray.h">
-      <Filter>Header Files\utils</Filter>
-    </ClInclude>
     <ClInclude Include="Wnd.h">
       <Filter>Header Files\IO</Filter>
     </ClInclude>
     <ClInclude Include="Main.h">
+      <Filter>Header Files\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -84,9 +90,6 @@
       <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="Sampler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -109,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="Wnd.cpp">
       <Filter>Source Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files\Main</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -14,14 +14,15 @@ public:
 	~Scene();
 
 	void InitScene();
-	bool Intersect(const Ray& aRay, float *aT = nullptr, Intersection* aIntersection = nullptr);
+	bool Intersect(const Ray& aRay, float *aT, Intersection* aIntersection);
+	//bool Intersect(const Ray& aRay);
 
 	const std::vector<Light*>& GetLights()
 	{
 		return mLights;
 	}
 private:
-	std::vector<Primitive*> mScene;
+	std::vector<Primitive*> mSceneObjects;
 	std::vector<Light*> mLights;
 };
 

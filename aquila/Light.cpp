@@ -29,9 +29,6 @@ DirectionalLight::~DirectionalLight()
 
 void DirectionalLight::GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor)
 {
-	PARANOID_PTR_CHECK(aLightRay, "DirectionalLight::GenerateLightRay - aLightRay null pointer");
-	PARANOID_PTR_CHECK(aLightColor, "DirectionalLight::GenerateLightRay - aLightColor null pointer");
-
 	*aLightColor = mColor * mIntensity;
 	aLightRay->Dir = -mDirection;
 	aLightRay->Pos = aLocal.Pos;
@@ -60,8 +57,5 @@ PointLight::~PointLight()
 
 void PointLight::GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor)
 {
-	PARANOID_PTR_CHECK(aLightRay, "PointLight::GenerateLightRay - aLightRay null pointer");
-	PARANOID_PTR_CHECK(aLightColor, "PointLight::GenerateLightRay - aLightColor null pointer");
-
 	//TODO
 }
