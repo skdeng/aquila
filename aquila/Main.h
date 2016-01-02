@@ -30,9 +30,12 @@ private:
 	SDL_Renderer* mRenderer;
 
 	Sampler mSampler;
+	Sample mSample;
+	Ray mEyeRay;
 	std::unique_ptr<Camera> mCamera;
 	Raytracer mRaytracer;
 	Scene mScene;
+	Color mPixelColor;
 	std::unique_ptr<Image> mImage;
 };
 

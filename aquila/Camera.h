@@ -10,7 +10,7 @@ public:
 	Camera(const vec3& aPosition, const vec3& aDirection, const vec3& aUp, const float aFOV, const int aScreenWidth, const int aScreenHeight);
 	~Camera();
 
-	void GetRay(const Sample& aSample, Ray* aRay, double offsetX, double offsetY);
+	void GetRay(const Sample& aSample, Ray* aRay, const float offsetX, const float offsetY);
 
 	//! Set the position of the camera
 	/*!

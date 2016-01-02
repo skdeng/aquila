@@ -19,16 +19,16 @@ Camera::~Camera()
 
 }
 
-void Camera::GetRay(const Sample& aSample, Ray* aRay, double offsetX, double offsetY)
+void Camera::GetRay(const Sample& aSample, Ray* aRay, const float offsetX, const float offsetY)
 {
-	double fovX = mFOV * mScreenWidth / mScreenHeight;
+	float fovX = mFOV * mScreenWidth / mScreenHeight;
 	
-	double thetaX = std::tan(mFOV / 2.0);
-	double thetaY = std::tan(mFOV / 2.0);
-	double halfWidth = mScreenWidth / 2.0;
-	double halfHeight = mScreenHeight / 2.0;
-	double alpha = thetaX * ((aSample.x + offsetX) - halfWidth) / halfWidth;
-	double beta = thetaY * (halfHeight - (aSample.y + offsetY)) / halfHeight;
+	float thetaX = std::tan(Utils::DegToRad(fovX) / 2.0f);
+	float thetaY = std::tan(Utils::DegToRad(mFOV) / 2.0f);
+	float halfWidth = mScreenWidth / 2.0f;
+	float halfHeight = mScreenHeight / 2.0f;
+	float alpha = thetaX * ((aSample.x + offsetX) - halfWidth) / halfWidth;
+	float beta = thetaY * (halfHeight - (aSample.y + offsetY)) / halfHeight;
 
 	aRay->Pos = mPosition;
 	aRay->Dir = normalize(alpha * mU + beta * mV - mW);

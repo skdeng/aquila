@@ -6,6 +6,7 @@ Raytracer::Raytracer()
 
 Raytracer::~Raytracer()
 {
+	mScene.release();
 }
 
 void Raytracer::Trace(const Ray& aRay, Color* aColor)
@@ -14,7 +15,7 @@ void Raytracer::Trace(const Ray& aRay, Color* aColor)
 	Intersection RayIntersection;
 	if (!mScene->Intersect(aRay, &T, &RayIntersection))
 	{
-		*aColor = COLOR::BLACK;
+		*aColor = COLOR::BLUE;
 		return;
 	}
 	

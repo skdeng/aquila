@@ -5,11 +5,18 @@ Main Main::Instance;
 Main::Main()
 {
 	mRunning = true;
+	mRenderer = nullptr;
+	mWindow = nullptr;
 }
 
 Main::~Main()
 {
+	SDL_DestroyRenderer(mRenderer);
+	mRenderer = nullptr;
+	SDL_DestroyWindow(mWindow);
+	mWindow = nullptr;
 
+	SDL_Quit();
 }
 
 int Main::Execute()
@@ -21,7 +28,7 @@ int Main::Execute()
 
 	SDL_Event e;
 
-	while (mRunning)
+	while (mRunning && mSampler.GetSample(&mSample))
 	{
 		while (SDL_PollEvent(&e))
 		{
@@ -86,21 +93,14 @@ void Main::OnEvent(const SDL_Event& e)
 
 void Main::OnUpdate()
 {
-	Sample sample;
-	Ray eyeRay;
-	Color color;
-	while (mSampler.GetSample(&sample))
-	{
-		mCamera->GetRay(sample, &eyeRay, 0, 0);
-		mRaytracer.Trace(eyeRay, &color);
-		mImage->Commit(sample, color);
-		SDL_RenderPresent(mRenderer);
-	}
+	mCamera->GetRay(mSample, &mEyeRay, 0, 0);
+	mRaytracer.Trace(mEyeRay, &mPixelColor);
+	mImage->Commit(mSample, mPixelColor);
 }
 
 void Main::OnRender()
 {
-
+	SDL_RenderPresent(mRenderer);
 }
 
 int main(int argc, char** argv)

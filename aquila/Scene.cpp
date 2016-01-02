@@ -30,7 +30,7 @@ Scene::~Scene()
 
 void Scene::InitScene()
 {
-	mSceneObjects.push_back(new Sphere(vec3(0, 0, 0), 4.0, BRDF(COLOR::RED, COLOR::GREEN, COLOR::BLUE, Color(1, 0, 0))));
+	mSceneObjects.push_back(new Sphere(vec3(0, 0, 0), 1.0, BRDF(COLOR::RED, COLOR::GREEN, COLOR::BLUE, Color(1, 0, 0))));
 
 	mLights.push_back(new DirectionalLight(Color(1.0f, 1.0f, 0.8f), vec3(-1.0f, -1.0f, 1.0f), 0.2f));
 }

@@ -20,12 +20,13 @@ private:
 	inline uint32_t ColorToRGBA(const Color& aColor);
 
 private:
-	uint32_t** mColorBuffer;
+	uint32_t* mImageBuffer;
 
 	unsigned int mWidth;
 	unsigned int mHeight;
 
 	SDL_Renderer* mRenderer;
+	SDL_Surface* mSurface;
 	SDL_Texture* mTexture;
 };
 
