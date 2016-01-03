@@ -43,7 +43,7 @@
     <LibraryPath>C:\Users\ShaoKun\OneDrive\Code\sdl2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\ShaoKun\OneDrive\Code\sdl2\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\ShaoKun\local\include;C:\Users\ShaoKun\OneDrive\Code\sdl2\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

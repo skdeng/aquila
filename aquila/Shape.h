@@ -11,7 +11,6 @@ public:
 	virtual ~Primitive();
 
 	virtual bool Intersect(const Ray& aRay, float* aT, Intersection* aIntersection) = 0;
-	virtual void GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF) = 0;
 
 protected:
 	//TODO use material for texture
@@ -22,12 +21,10 @@ protected:
 class Triangle : public Primitive
 {
 public:
-	Triangle();
 	Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const Color& aColor);
 	~Triangle();
 
-	bool Intersect(const Ray& aRay, float* aT = nullptr, Intersection* aIntersection = nullptr);
-	void GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF);
+	bool Intersect(const Ray& aRay, float* aT, Intersection* aIntersection);
 
 private:
 	bool Inside(const float afX, const float afY, const float afZ);
@@ -54,18 +51,47 @@ private:
 	vec3 mNormal;	//normal to the plane
 };
 
+//! Sphere
+/*!
+	A sphere defined by its center and radius
+*/
 class Sphere : public Primitive
 {
 public:
 	Sphere(const vec3& aCenter, const float aRadius, const BRDF& aMaterial);
 	~Sphere();
 
-	bool Intersect(const Ray& aRay, float* aT = nullptr, Intersection* aIntersection = nullptr);
-	void GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF);
+	bool Intersect(const Ray& aRay, float* aT, Intersection* aIntersection);
 
 private:
 	vec3 mCenter;
 	float mRadius;
+};
+
+class Box : public Primitive
+{
+public:
+	Box(const vec3& aMin, const vec3& aMax, const BRDF& aMaterial);
+	~Box();
+
+	bool Intersect(const Ray& aRay, float* aT, Intersection* aIntersection);
+
+private:
+	vec3 mMin, mMax;
+};
+
+class Plane : public Primitive
+{
+public:
+	Plane(const Transformation& aM, const BRDF& aMaterial1, const BRDF& aMaterial2);
+	~Plane();
+	bool Intersect(const Ray& aRay, float* aT, Intersection* aIntersection);
+private:
+	Transformation mM;
+	vec3 mNormal;
+	vec3 mOrigin;
+
+	BRDF mSecondaryMaterial;
 };
 
 #endif

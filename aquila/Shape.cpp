@@ -10,10 +10,7 @@ Primitive::~Primitive()
 
 }
 
-Triangle::Triangle()
-{
-	
-}
+//=================================================================================================
 
 Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const Color& aColor)
 {
@@ -80,11 +77,6 @@ bool Triangle::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection
 	return true;
 }
 
-void Triangle::GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF)
-{
-	*aBRDF = mMaterial;
-}
-
 bool Triangle::Inside(const vec3& aPoint)
 {
 	vec3 BarycentricPoint;
@@ -103,6 +95,8 @@ bool Triangle::Inside(const float afX, const float afY, const float afZ)
 {
 	return Inside(vec3(afX, afY, afZ));
 }
+
+//=================================================================================================
 
 Sphere::Sphere(const vec3& aCenter, const float aRadius, const BRDF& aMaterial)
 {
@@ -138,7 +132,10 @@ bool Sphere::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 		else
 			tmpT -= sqrtdet;
 	}
-	
+
+	if (tmpT < aRay.TMin || tmpT > aRay.TMax)
+		return false;
+
 	if (aT)
 	{
 		*aT = tmpT;
@@ -155,7 +152,118 @@ bool Sphere::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 	return true;
 }
 
-void Sphere::GetBRDF(const LocalGeo& aLocal, BRDF* aBRDF)
+//=================================================================================================
+
+Box::Box(const vec3& aMin, const vec3& aMax, const BRDF& aMaterial)
 {
-	aBRDF = &mMaterial;
+	mMin = aMin;
+	mMax = aMax;
+	mMaterial = aMaterial;
+}
+
+Box::~Box()
+{
+
+}
+
+bool Box::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
+{
+	vec3 Diff = 1.0f / aRay.Dir;
+
+	vec3 TMin = elemul(mMin - aRay.Pos, Diff);
+	vec3 TMax = elemul(mMax - aRay.Pos, Diff);
+
+	float temp;
+	if (Diff.x < 0)
+	{
+		temp = TMin.x;
+		TMin.x = TMax.x;
+		TMax.x = TMin.x;
+	}
+	if (Diff.y < 0)
+	{
+		temp = TMin.y;
+		TMin.y = TMax.y;
+		TMax.y = TMin.y;
+	}
+	if (Diff.z < 0)
+	{
+		temp = TMin.z;
+		TMin.z = TMax.z;
+		TMax.z = TMin.z;
+	}
+
+	float MaxTMin = std::max({ TMin.x, TMin.y, TMin.z });
+	float MinTMax = std::min({ TMax.x, TMax.y, TMax.z });
+
+	if (MaxTMin < 0 || MinTMax < 0 || MaxTMin > MinTMax)
+	{
+		//No intersection
+		return false;
+	}
+	else
+	{
+		if (aT)
+		{
+			*aT = MaxTMin;
+		}
+		if (aIntersection)
+		{
+			aIntersection->Object = this;
+			aIntersection->Material = mMaterial;
+			//TODO compute local geometry
+		}
+		return true;
+	}
+}
+
+//=================================================================================================
+
+Plane::Plane(const Transformation& aM, const BRDF& aMaterial1, const BRDF& aMaterial2) : mM(aM)
+{
+	mNormal = mM * vec3(0, 1, 0);
+	mOrigin = mM * vec3(0, 0, 0);
+	mMaterial = aMaterial1;
+	mSecondaryMaterial = aMaterial2;
+}
+
+Plane::~Plane()
+{
+
+}
+
+bool Plane::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
+{
+	Ray TRay(mM * aRay.Pos, mM * aRay.Dir);
+	float Theta = dot(TRay.Dir, mNormal);
+
+	if (Theta > -CONSTANT::PLANE_HORIZON && Theta < CONSTANT::PLANE_HORIZON)
+	{
+		return false;
+	}
+	else
+	{
+		float k = dot(-TRay.Pos, mNormal);
+		float TmpT = dot(mOrigin - TRay.Pos, mNormal) / Theta;
+
+		if (TmpT < aRay.TMin || TmpT > aRay.TMax)
+			return false;
+
+		if (aT)
+		{
+			*aT = TmpT;
+		}
+		if (aIntersection)
+		{
+			aIntersection->Object = this;
+			aIntersection->Local.Normal = mNormal;
+			aIntersection->Local.Pos = aRay + TmpT;
+
+			if ((int(aIntersection->Local.Pos.x) + int(aIntersection->Local.Pos.z)) % 2 == 0)
+				aIntersection->Material = mMaterial;
+			else
+				aIntersection->Material = mSecondaryMaterial;
+		}
+		return true;
+	}
 }

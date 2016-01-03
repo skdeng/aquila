@@ -18,6 +18,7 @@ public:
 
 	virtual void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor) = 0;
 	virtual const LightType GetType() = 0;
+
 protected:
 	vec3 mColor;
 	float mIntensity;
@@ -33,11 +34,10 @@ public:
 	void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor);
 	const LightType GetType()
 	{
-		return mType;
+		return DIRECTIONAL;
 	}
 private:
 	vec3 mDirection;
-	const LightType mType = DIRECTIONAL;
 };
 
 class PointLight : public Light
@@ -50,11 +50,15 @@ public:
 	void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor);
 	const LightType GetType()
 	{
-		return mType;
+		return POINT;
 	}
 private:
+	static const float ConstantAttenuation;
+	static const float LinearAttenuation;
+	static const float QuadraticAttenuation;
+
 	vec3 mPosition;
-	const LightType mType = POINT;
+
 };
 
 #endif

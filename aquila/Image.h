@@ -10,23 +10,19 @@ class Image
 public:
 	Image(SDL_Renderer* aRenderer, const unsigned int aWidth, const unsigned int aHeight);
 	~Image();
-	
-	void Commit(const Sample& aSample, const Color& aColor);
-	void Update(const Sample& aSample);
 
+	void Commit(const Sample& aSample, const Color& aColor);
 	void SetRenderer(SDL_Renderer* aRenderer);
+	void Save(const char* aFile);
 
 private:
 	inline uint32_t ColorToRGBA(const Color& aColor);
 
 private:
-	uint32_t* mImageBuffer;
-
 	unsigned int mWidth;
 	unsigned int mHeight;
 
 	SDL_Renderer* mRenderer;
-	SDL_Surface* mSurface;
 	SDL_Texture* mTexture;
 };
 

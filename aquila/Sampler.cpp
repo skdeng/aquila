@@ -1,14 +1,5 @@
 #include "Sampler.h"
 
-Sampler::Sampler()
-{
-	mScreenWidth = CONSTANT::IMAGE_WIDTH;
-	mScreenHeight = CONSTANT::IMAGE_HEIGHT;
-
-	mCurrentX = 0;
-	mCurrentY = 0;
-}
-
 Sampler::Sampler(int aScreenWidth, int aScreenHeight)
 {
 	mScreenWidth = aScreenWidth;

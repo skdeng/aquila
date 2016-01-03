@@ -18,7 +18,7 @@ public:
 	void SetScene(Scene* aScene);
 
 private:
-	Color Shade(const LocalGeo& aLocal, const BRDF& aBRDF, const Ray& aLightRay, const Color& aLightColor, const Light::LightType aLightType);
+	Color Shade(const Ray& aRay, const Intersection& aIntersection, Light& aLight);
 
 private:
 	std::unique_ptr<Scene> mScene;

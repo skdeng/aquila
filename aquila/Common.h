@@ -9,6 +9,9 @@
 
 #include <memory>
 #include <SDL.h>
+#include <fstream>
+#include <algorithm>
+#include <cmath>
 
 #define AQ_DEBUG
 

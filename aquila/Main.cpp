@@ -28,7 +28,7 @@ int Main::Execute()
 
 	SDL_Event e;
 
-	while (mRunning && mSampler.GetSample(&mSample))
+	while (mRunning && mSampler->GetSample(&mSample))
 	{
 		while (SDL_PollEvent(&e))
 		{
@@ -39,10 +39,12 @@ int Main::Execute()
 		OnRender();
 	}
 
+	mImage->Save("image.bmp");
+
 	return 0;
 }
 
-bool Main::OnInit()
+bool Main::SetupSDL()
 {
 	//Initialize SDL system
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -58,7 +60,7 @@ bool Main::OnInit()
 #endif
 
 	//Create window
-	mWindow = SDL_CreateWindow(CONSTANT::WINDOW_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, CONSTANT::IMAGE_WIDTH, CONSTANT::IMAGE_HEIGHT, SDL_WINDOW_SHOWN);
+	mWindow = SDL_CreateWindow(CONSTANT::WINDOW_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mScene.Properties.ImageWidth, mScene.Properties.ImageHeight, SDL_WINDOW_SHOWN);
 	if (mWindow == NULL)
 	{
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Window creation error", SDL_GetError(), NULL);
@@ -71,17 +73,22 @@ bool Main::OnInit()
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Renderer creation error", SDL_GetError(), NULL);
 		return false;
 	}
-	SDL_SetRenderDrawColor(mRenderer, 0, 0, 255, 255);
+	SDL_SetRenderDrawColor(mRenderer, 0, 0, 0, 255);
 
-	return SetupRaytracer();
+	return true;
 }
 
-bool Main::SetupRaytracer()
+bool Main::OnInit()
 {
-	mCamera = std::make_unique<Camera>(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, -1.0f), vec3(0.0f, 1.0f, 0.0f), 45.0f, CONSTANT::IMAGE_WIDTH, CONSTANT::IMAGE_HEIGHT);
 	mScene.InitScene();
+
+	if (!SetupSDL())
+		return false;
+
+	mSampler = std::make_unique<Sampler>(mScene.Properties.ImageWidth, mScene.Properties.ImageHeight);
+	mCamera = std::make_unique<Camera>(vec3(0.0f, 2.0f, 5.0f), vec3(0.0f, -2.0f, -5.0f), vec3(0.0f, 1.0f, 0.0f), 45.0f, mScene.Properties.ImageWidth, mScene.Properties.ImageHeight);
 	mRaytracer.SetScene(&mScene);
-	mImage = std::make_unique<Image>(mRenderer, CONSTANT::IMAGE_WIDTH, CONSTANT::IMAGE_HEIGHT);
+	mImage = std::make_unique<Image>(mRenderer, mScene.Properties.ImageWidth, mScene.Properties.ImageHeight);
 
 	return true;
 }
@@ -93,8 +100,18 @@ void Main::OnEvent(const SDL_Event& e)
 
 void Main::OnUpdate()
 {
-	mCamera->GetRay(mSample, &mEyeRay, 0, 0);
-	mRaytracer.Trace(mEyeRay, &mPixelColor);
+	mPixelColor = COLOR::BLACK;
+	Color TempColor;
+	for (int i = 0; i < mScene.Properties.PrimarySample; i++)
+	{
+		float offX = Utils::RandFloat() - 0.5;
+		float offY = Utils::RandFloat() - 0.5;
+
+		mCamera->GetRay(mSample, &mEyeRay, offX, offY);
+		mRaytracer.Trace(mEyeRay, &TempColor);
+		mPixelColor += TempColor;
+	}
+	mPixelColor /= mScene.Properties.PrimarySample;
 	mImage->Commit(mSample, mPixelColor);
 }
 

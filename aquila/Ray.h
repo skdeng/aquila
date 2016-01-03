@@ -23,6 +23,11 @@ struct Ray
 		TMax = aTMax;
 		TMin = aTMin;
 	}
+
+	friend vec3 operator+(Ray r, float t)
+	{
+		return r.Pos + t * r.Dir;
+	}
 };
 
 #endif

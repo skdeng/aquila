@@ -111,6 +111,24 @@ vec3 rotate(const vec3 &u, float angle, const vec3 &v)
 	return *(vec3*)&(rotate(angle, v) * vec4(u, 1.0f));
 }
 
+vec3 clamp(const vec3 &u, float min, float max)
+{
+	return vec3(
+		Utils::Clamp(u.x, min, max),
+		Utils::Clamp(u.y, min, max),
+		Utils::Clamp(u.z, min, max)
+		);
+}
+
+vec3 elemul(const vec3& u, const vec3& v)
+{
+	return vec3(
+		u.x * v.x,
+		u.y * v.y,
+		u.z * v.z
+		);
+}
+
 // ----------------------------------------------------------------------------------------------------------------------------
 
 mat2x2::mat2x2()

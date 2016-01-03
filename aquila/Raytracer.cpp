@@ -15,23 +15,19 @@ void Raytracer::Trace(const Ray& aRay, Color* aColor)
 	Intersection RayIntersection;
 	if (!mScene->Intersect(aRay, &T, &RayIntersection))
 	{
-		*aColor = COLOR::BLUE;
+		*aColor = mScene->Properties.BackgroundColor;
 		return;
 	}
 	
-	*aColor = RayIntersection.Material.kd;
+	//*aColor = RayIntersection.Material.kd;
+	*aColor = COLOR::BLACK;
 
-	//std::cout << std::string(RayIntersection.Material.kd) << std::endl;
-	//for (Light* light : mScene.GetLights())
-	//{
-	//	Ray LightRay;
-	//	Color LightColor;
-	//	light->GenerateLightRay(RayIntersection.Local, &LightRay, &LightColor);
-	//	if (!mScene.Intersect(LightRay, nullptr, nullptr))
-	//	{
-	//		*aColor += Shade(RayIntersection.Local, IntersectionBRDF, LightRay, LightColor, light->GetType());
-	//	}
-	//}
+	for (Light* light : mScene->GetLights())
+	{
+		*aColor += Shade(aRay, RayIntersection, *light);
+	}
+
+	*aColor = clamp(*aColor, 0.0f, 1.0f);
 
 	//TODO handle reflection
 }
@@ -41,25 +37,32 @@ void Raytracer::SetScene(Scene* aScene)
 	mScene = std::unique_ptr<Scene>(aScene);
 }
 
-Color Raytracer::Shade(const LocalGeo& aLocal, const BRDF& aBRDF, const Ray& aLightRay, const Color& aLightColor, const Light::LightType aLightType)
+Color Raytracer::Shade(const Ray& aRay, const Intersection& aIntersection, Light& aLight)
 {
+	Ray ShadowRay;
+	Color LightColor;
+	aLight.GenerateLightRay(aIntersection.Local, &ShadowRay, &LightColor);
+	if (mScene->Intersect(ShadowRay, nullptr, nullptr))
+	{
+		return Color(0.0f, 0.0f, 0.0f);
+	}
+
+	float LightRatio = 1.0;
+
 	Color DiffuseColor, SpecularColor, AmbientColor;
 
-	switch (aLightType)
-	{
-		case Light::DIRECTIONAL:
-		{
-			//Directional light
-			float DiffuseIntensity = Utils::Clamp(dot(aLocal.Normal, aLightRay.Dir), 0.0f, 1.0f);
-			DiffuseColor = aLightColor * DiffuseIntensity * aBRDF.kd;
+	//Diffuse light
+	float DiffuseIntensity = Utils::Clamp(dot(aIntersection.Local.Normal, ShadowRay.Dir), 0.0f, 1.0f);
+	DiffuseColor = LightColor * DiffuseIntensity * aIntersection.Material.kd * LightRatio;
 
-			//Ambient light
-			AmbientColor = aLightColor * aBRDF.ka;
+	//Ambient light
+	AmbientColor = LightColor * aIntersection.Material.ka;
 
-			//Specular light
-			break;
-		}
-	}
+	//Specular light
+	vec3 HalfVec = normalize(ShadowRay.Dir - aRay.Dir);
+	double Alpha = Utils::Clamp(dot(HalfVec, aIntersection.Local.Normal), 0.0f, 1.0f);
+	float SpecularIntensity = std::pow(Alpha, aIntersection.Material.hardness);
+	SpecularColor = elemul(LightColor, aIntersection.Material.ks) * SpecularIntensity * LightRatio;
 
 	return DiffuseColor + SpecularColor + AmbientColor;
 }

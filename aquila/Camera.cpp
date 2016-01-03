@@ -21,10 +21,10 @@ Camera::~Camera()
 
 void Camera::GetRay(const Sample& aSample, Ray* aRay, const float offsetX, const float offsetY)
 {
-	float fovX = mFOV * mScreenWidth / mScreenHeight;
+	float FOVX = mFOV * mScreenWidth / mScreenHeight;
 	
-	float thetaX = std::tan(Utils::DegToRad(fovX) / 2.0f);
-	float thetaY = std::tan(Utils::DegToRad(mFOV) / 2.0f);
+	float thetaX = (float)std::tan(Utils::DegToRad(FOVX) / 2.0f);
+	float thetaY = (float)std::tan(Utils::DegToRad(mFOV) / 2.0f);
 	float halfWidth = mScreenWidth / 2.0f;
 	float halfHeight = mScreenHeight / 2.0f;
 	float alpha = thetaX * ((aSample.x + offsetX) - halfWidth) / halfWidth;

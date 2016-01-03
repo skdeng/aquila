@@ -2,6 +2,10 @@
 #define _AQUILA_UTILS_H_
 
 #include <algorithm>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <utility>
 
 namespace Utils
 {
@@ -20,6 +24,30 @@ namespace Utils
 	{
 		return deg * M_PI / 180;
 	}
+
+	inline std::vector<std::string> explode(std::string const & s, char delim)
+	{
+		std::vector<std::string> result;
+		std::istringstream iss(s);
+
+		for (std::string token; std::getline(iss, token, delim); )
+		{
+			result.push_back(std::move(token));
+		}
+
+		return result;
+	}
+
+	//!Returns a random integer between x and y
+	inline int RandInt(int x, int y) { return rand() % (y - x + 1) + x; }
+	//!Returns a random float between zero and 1
+	inline double RandFloat() { return (rand()) / (RAND_MAX + 1.0); }
+	//!Returns a random float between the given interval
+	inline double RandFloatInterval(float min, float max) { float interval = max - min;	return min + interval*RandFloat(); }
+	//!Returns a random bool
+	inline bool RandBool() { if (RandInt(0, 1)) return true;	else return false; }
+	//!Returns a random float in the range -1 < n < 1
+	inline double RandNormal() { return RandFloat() - RandFloat(); }
 }
 
 #endif

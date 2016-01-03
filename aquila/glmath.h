@@ -1,3 +1,6 @@
+//Disclaimer:: This code does not belong to me nor did I create it in the first place
+//However, I did implement several additions to the existing structures. I have marked those with "Shao Kun Deng" comments
+
 // ----------------------------------------------------------------------------------------------------------------------------
 //
 // Version 2.04
@@ -8,6 +11,8 @@
 #define _glmath_
 
 #define _USE_MATH_DEFINES
+
+#include "Utils.h"
 
 #include <math.h>
 #include <string>
@@ -53,6 +58,7 @@ public:
 	
 	//Shao Kun Deng
 	operator std::string() const { return "("+std::to_string(x)+","+std::to_string(y)+")"; }
+	vec2(std::string s) { std::vector<std::string> vs = Utils::explode(s, ' '); x = std::stof(vs[0]); y = std::stof(vs[1]); }
 };
 
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -108,6 +114,7 @@ public:
 	
 	//Shao Kun Deng
 	operator std::string() const { return "(" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + ")"; }
+	vec3(std::string s) { std::vector<std::string> vs = Utils::explode(s, ' '); x = std::stof(vs[0]); y = std::stof(vs[1]); z = std::stof(vs[2]); }
 };
 
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -121,6 +128,10 @@ vec3 normalize(const vec3 &u);
 vec3 reflect(const vec3 &i, const vec3 &n);
 vec3 refract(const vec3 &i, const vec3 &n, float eta);
 vec3 rotate(const vec3 &u, float angle, const vec3 &v);
+
+//Shao Kun Deng
+vec3 clamp(const vec3 &u, float min, float max);
+vec3 elemul(const vec3& u, const vec3& v);
 
 // ----------------------------------------------------------------------------------------------------------------------------
 

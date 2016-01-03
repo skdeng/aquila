@@ -6,7 +6,6 @@
 class Sampler
 {
 public:
-	Sampler();
 	Sampler(int aScreenWidth, int aScreenHeight);
 	~Sampler();
 

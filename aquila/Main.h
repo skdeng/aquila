@@ -18,7 +18,7 @@ private:
 	~Main();
 
 	bool OnInit();
-	bool SetupRaytracer();
+	bool SetupSDL();
 	void OnEvent(const SDL_Event& e);
 	void OnUpdate();
 	void OnRender();
@@ -29,7 +29,7 @@ private:
 	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;
 
-	Sampler mSampler;
+	std::unique_ptr<Sampler> mSampler;
 	Sample mSample;
 	Ray mEyeRay;
 	std::unique_ptr<Camera> mCamera;

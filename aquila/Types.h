@@ -41,9 +41,11 @@ struct BRDF
 	//! Reflectance coefficient
 	Color kr;
 
+	float hardness;
+
 	BRDF(){}
-	BRDF(Color aKD, Color aKS, Color aKA, Color aKR) :
-		kd(aKD), ks(aKS), ka(aKA), kr(aKR) {}
+	BRDF(Color aKD, Color aKS, Color aKA, Color aKR, float aHardness) :
+		kd(aKD), ks(aKS), ka(aKA), kr(aKR), hardness(aHardness) {}
 };
 
 //! Intersection point information in world-space
