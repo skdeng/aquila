@@ -6,21 +6,23 @@
 
 namespace CONSTANT
 {
-	const float RAY_MINIMUM = 0.00001f;
-	const float RAY_MAXIMUM = 100000;
+	const aq_float RAY_MINIMUM = 0.00001f;
+	const aq_float RAY_MAXIMUM = 100000;
 
 	static const char* WINDOW_NAME = "Project Aquila - CPU Ray Tracer";
 
-	const float PLANE_HORIZON = 0.001f;
+	const aq_float PLANE_HORIZON = 0.01f;
 }
 
 namespace COLOR
 {
-	static const Color BLACK(0.0f, 0.0f, 0.0f);
-	static const Color WHITE(1.0f, 1.0f, 1.0f);
-	static const Color RED(1.0f, 0.0f, 0.0f);
-	static const Color GREEN(0.0f, 1.0f, 0.0f);
-	static const Color BLUE(0.0f, 0.0f, 1.0f);
+	static const Color BLACK(0.0, 0.0, 0.0);
+	static const Color WHITE(1.0, 1.0, 1.0);
+	static const Color RED(1.0, 0.0, 0.0);
+	static const Color GREEN(0.0, 1.0, 0.0);
+	static const Color BLUE(0.0, 0.0, 1.0);
+	static const Color GOLD(0.72, 0.45, 0.2);
+	static const Color SILVER(0.75, 0.75, 0.75);
 }
 
 namespace MATRIX
@@ -30,8 +32,39 @@ namespace MATRIX
 
 namespace MATERIAL
 {
-	static const BRDF SILVER(0.8f * COLOR::WHITE, 0.6f * COLOR::WHITE, 0.1f * COLOR::WHITE, COLOR::WHITE, 56);
-	static const BRDF BLUE_MATT(1.0f * COLOR::BLUE, 0.4f * COLOR::BLUE, 0.1f * COLOR::BLUE, COLOR::BLUE, 12);
+	static const BRDF SILVER(
+		COLOR::SILVER,
+		COLOR::SILVER, 
+		0.1 * COLOR::WHITE, 
+		0.5 * COLOR::WHITE, 
+		16,
+		0,
+		1);
+	static const BRDF BLUE_MATT(
+		1.0 * COLOR::BLUE, 
+		0.4 * COLOR::BLUE, 
+		0.1 * COLOR::BLUE, 
+		COLOR::BLACK, 
+		12,
+		0,
+		1);
+	static const BRDF GOLD(
+		COLOR::GOLD, 
+		0.5 * COLOR::WHITE, 
+		0.1 * COLOR::WHITE, 
+		0.2 * COLOR::WHITE,
+		16,
+		0,
+		1);
+	static const BRDF GLASS(
+		COLOR::SILVER,
+		COLOR::SILVER,
+		0.1 * COLOR::SILVER,
+		0.3 * COLOR::SILVER,
+		56,
+		0.8,
+		1.5
+		);
 }
 
 #endif

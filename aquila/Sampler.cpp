@@ -14,7 +14,7 @@ Sampler::~Sampler()
 
 }
 
-bool Sampler::GetSample(Sample* aSampler, float aX, float aY)
+bool Sampler::GetSample(Sample* aSampler, aq_float aX, aq_float aY)
 {
 	if (aX >= mScreenWidth || aY >= mScreenHeight)
 		return false;

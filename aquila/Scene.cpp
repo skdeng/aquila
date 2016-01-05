@@ -7,6 +7,16 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+	for (unsigned int i = 0; i < mMaterials.size(); i++)
+	{
+		if (mMaterials[i] != nullptr)
+		{
+			delete mMaterials[i];
+			mMaterials[i] = nullptr;
+		}
+	}
+	mMaterials.clear();
+
 	for (unsigned int i = 0; i < mSceneObjects.size(); i++)
 	{
 		if (mSceneObjects[i] != nullptr)
@@ -30,10 +40,13 @@ Scene::~Scene()
 
 void Scene::InitScene()
 {
-	mSceneObjects.push_back(new Plane(Transformation(MATRIX::I), MATERIAL::SILVER, MATERIAL::BLUE_MATT));
-	mSceneObjects.push_back(new Sphere(vec3(0.0f, 1.0f, 0.0f), 1.0f, MATERIAL::BLUE_MATT));
-	//mLights.push_back(new DirectionalLight(Color(1.0f, 1.0f, 0.8f), vec3(-1.0f, -1.0f, -1.0f), 1.0f));
-	mLights.push_back(new PointLight(Color(1.0f, 1.0f, 1.0f), vec3(0.0f, 2.0f, 0.0f), 0.8f));
+	mSceneObjects.push_back(new Plane(MATERIAL::SILVER, MATERIAL::BLUE_MATT));
+	mSceneObjects.push_back(new Sphere(vec3(0, 1, 0), 1.0, MATERIAL::GOLD));
+	mSceneObjects.push_back(new Sphere(vec3(2, 0.7, 0), 0.5, MATERIAL::BLUE_MATT));
+	mSceneObjects.push_back(new Triangle(vec3(0.0, 0.5, 3), vec3(-2, 0.5, 3), vec3(-1, 2, 3), MATERIAL::GLASS));
+	//mLights.push_back(new DirectionalLight(Color(1.0, 1.0, 1.0), vec3(1, 1, -1), 1));
+	mLights.push_back(new PointLight(Color(1.0, 1.0, 1.0), vec3(6.0, 4.0, 10.0), 0.8));
+	mLights.push_back(new PointLight(Color(1.0, 1.0, 1.0), vec3(-2.0, 1.0, 4.0), 0.8));
 }
 
 void Scene::InitScene(const char* aSceneFile)
@@ -70,6 +83,7 @@ void Scene::InitScene(const char* aSceneFile)
 	mProperties.CameraUp = vec3(Doc["cam"]["up"].GetString());
 
 	//Parse scene lights
+	mLights.reserve(Doc["lights"]["count"].GetInt());
 	for (auto itr = Doc["lights"].MemberBegin(); itr != Doc["lights"].MemberEnd(); itr++)
 	{
 		Light* NewLight;
@@ -81,9 +95,11 @@ void Scene::InitScene(const char* aSceneFile)
 		{
 			NewLight = new PointLight(Color(itr->value["color"].GetString()), Color(itr->value["pos"].GetString()), itr->value["intensity"].GetDouble());
 		}
+		mLights.push_back(NewLight);
 	}
 
 	//Parse scene objects
+	mSceneObjects.reserve(Doc["object"]["count"].GetInt());
 	for (auto itr = Doc["objects"].MemberBegin(); itr != Doc["objects"].MemberEnd(); itr++)
 	{
 		Primitive* NewObj;
@@ -96,19 +112,20 @@ void Scene::InitScene(const char* aSceneFile)
 		{
 			//TODO add triangle
 		}
+		mSceneObjects.push_back(NewObj);
 	}
 }
 
-bool Scene::Intersect(const Ray& aRay, float *aT, Intersection* aIntersection)
+bool Scene::Intersect(const Ray& aRay, aq_float *aT, Intersection* aIntersection)
 {
 	bool intersect = false;
 
-	if (aT) *aT = std::numeric_limits<float>::infinity();
+	if (aT) *aT = std::numeric_limits<aq_float>::infinity();
 
 	//TODO use acceleration structure
 	for (unsigned int i = 0; i < mSceneObjects.size(); i++)
 	{
-		float tmpT;
+		aq_float tmpT;
 		Intersection tmpIntersection;
 		if (mSceneObjects[i]->Intersect(aRay, &tmpT, &tmpIntersection))
 		{

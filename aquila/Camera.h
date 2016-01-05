@@ -7,10 +7,10 @@ class Camera
 {
 public:
 	Camera();
-	Camera(const vec3& aPosition, const vec3& aDirection, const vec3& aUp, const float aFOV, const int aScreenWidth, const int aScreenHeight);
+	Camera(const vec3& aPosition, const vec3& aDirection, const vec3& aUp, const aq_float aFOV, const int aScreenWidth, const int aScreenHeight);
 	~Camera();
 
-	void GetRay(const Sample& aSample, Ray* aRay, const float offsetX, const float offsetY);
+	void GetRay(const Sample& aSample, Ray* aRay, const aq_float offsetX, const aq_float offsetY);
 
 	//! Set the position of the camera
 	/*!
@@ -25,7 +25,7 @@ public:
 	*/
 	void SetDirection(const vec3& aDirection, const vec3& aUp);
 	
-	void SetVerticalFOV(const float aFOV);
+	void SetVerticalFOV(const aq_float aFOV);
 
 private:
 	//! Position of the camera
@@ -35,7 +35,7 @@ private:
 	//! Coordinate frame to generate the ray
 	vec3 mU, mV, mW;
 	//! Field of view of the camera
-	float mFOV;
+	aq_float mFOV;
 	//! Screen dimensions
 	int mScreenWidth, mScreenHeight;
 };

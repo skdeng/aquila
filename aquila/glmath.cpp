@@ -2,24 +2,24 @@
 
 // ----------------------------------------------------------------------------------------------------------------------------
 
-float dot(const vec2 &u, const vec2 &v)
+double dot(const vec2 &u, const vec2 &v)
 {
 	return u.x * v.x + u.y * v.y;
 }
 
-float length(const vec2 &u)
+double length(const vec2 &u)
 {
 	return sqrt(u.x * u.x + u.y * u.y);
 }
 
-float length2(const vec2 &u)
+double length2(const vec2 &u)
 {
 	return u.x * u.x + u.y * u.y;
 }
 
-vec2 mix(const vec2 &u, const vec2 &v, float a)
+vec2 mix(const vec2 &u, const vec2 &v, double a)
 {
-	return u * (1.0f - a) + v * a;
+	return u * (1.0 - a) + v * a;
 }
 
 vec2 normalize(const vec2 &u)
@@ -29,16 +29,16 @@ vec2 normalize(const vec2 &u)
 
 vec2 reflect(const vec2 &i, const vec2 &n)
 {
-	return i - 2.0f * dot(n, i) * n;
+	return i - 2.0 * dot(n, i) * n;
 }
 
-vec2 refract(const vec2 &i, const vec2 &n, float eta)
+vec2 refract(const vec2 &i, const vec2 &n, double eta)
 {
 	vec2 r;
 
-	float ndoti = dot(n, i), k = 1.0f - eta * eta * (1.0f - ndoti * ndoti);
+	double ndoti = dot(n, i), k = 1.0 - eta * eta * (1.0 - ndoti * ndoti);
 
-	if(k >= 0.0f)
+	if(k >= 0.0)
 	{
 		r = eta * i - n * (eta * ndoti + sqrt(k));
 	}
@@ -46,11 +46,11 @@ vec2 refract(const vec2 &i, const vec2 &n, float eta)
 	return r;
 }
 
-vec2 rotate(const vec2 &u, float angle)
+vec2 rotate(const vec2 &u, double angle)
 {
-	angle = angle / 180.0f * (float)M_PI;
+	angle = angle / 180.0 * (double)M_PI;
 
-	float c = cos(angle), s = sin(angle);
+	double c = cos(angle), s = sin(angle);
 
 	return vec2(u.x * c - u.y * s, u.x * s + u.y * c);
 }
@@ -62,24 +62,24 @@ vec3 cross(const vec3 &u, const vec3 &v)
 	return vec3(u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z, u.x * v.y - u.y * v.x);
 }
 
-float dot(const vec3 &u, const vec3 &v)
+double dot(const vec3 &u, const vec3 &v)
 {
 	return u.x * v.x + u.y * v.y + u.z * v.z;
 }
 
-float length(const vec3 &u)
+double length(const vec3 &u)
 {
 	return sqrt(u.x * u.x + u.y * u.y + u.z * u.z);
 }
 
-float length2(const vec3 &u)
+double length2(const vec3 &u)
 {
 	return u.x * u.x + u.y * u.y + u.z * u.z;
 }
 
-vec3 mix(const vec3 &u, const vec3 &v, float a)
+vec3 mix(const vec3 &u, const vec3 &v, double a)
 {
-	return u * (1.0f - a) + v * a;
+	return u * (1.0 - a) + v * a;
 }
 
 vec3 normalize(const vec3 &u)
@@ -89,16 +89,16 @@ vec3 normalize(const vec3 &u)
 
 vec3 reflect(const vec3 &i, const vec3 &n)
 {
-	return i - 2.0f * dot(n, i) * n;
+	return i - 2.0 * dot(n, i) * n;
 }
 
-vec3 refract(const vec3 &i, const vec3 &n, float eta)
+vec3 refract(const vec3 &i, const vec3 &n, double eta)
 {
 	vec3 r;
 
-	float ndoti = dot(n, i), k = 1.0f - eta * eta * (1.0f - ndoti * ndoti);
+	double ndoti = dot(n, i), k = 1.0 - eta * eta * (1.0 - ndoti * ndoti);
 
-	if(k >= 0.0f)
+	if(k >= 0.0)
 	{
 		r = eta * i - n * (eta * ndoti + sqrt(k));
 	}
@@ -106,12 +106,12 @@ vec3 refract(const vec3 &i, const vec3 &n, float eta)
 	return r;
 }
 
-vec3 rotate(const vec3 &u, float angle, const vec3 &v)
+vec3 rotate(const vec3 &u, double angle, const vec3 &v)
 {
-	return *(vec3*)&(rotate(angle, v) * vec4(u, 1.0f));
+	return *(vec3*)&(rotate(angle, v) * vec4(u, 1.0));
 }
 
-vec3 clamp(const vec3 &u, float min, float max)
+vec3 clamp(const vec3 &u, double min, double max)
 {
 	return vec3(
 		Utils::Clamp(u.x, min, max),
@@ -129,12 +129,21 @@ vec3 elemul(const vec3& u, const vec3& v)
 		);
 }
 
+vec3 mix(const vec3& u, const vec3& v, const vec3& m)
+{
+	return vec3(
+		u.x * (1.0 - m.x) + v.x * m.x,
+		u.y * (1.0 - m.y) + v.y * m.y,
+		u.z * (1.0 - m.z) + v.z * m.z
+		);
+}
+
 // ----------------------------------------------------------------------------------------------------------------------------
 
 mat2x2::mat2x2()
 {
-	M[0] = 1.0f; M[2] = 0.0f;
-	M[1] = 0.0f; M[3] = 1.0f;
+	M[0] = 1.0; M[2] = 0.0;
+	M[1] = 0.0; M[3] = 1.0;
 }
 
 mat2x2::~mat2x2()
@@ -155,7 +164,7 @@ mat2x2::mat2x2(const vec2 &col1, const vec2 &col2)
 	M[1] = col1.y; M[3] = col2.y;
 }
 
-mat2x2::mat2x2(float c1r1, float c1r2, float c2r1, float c2r2)
+mat2x2::mat2x2(double c1r1, double c1r2, double c2r1, double c2r2)
 {
 	M[0] = c1r1; M[2] = c2r1;
 	M[1] = c1r2; M[3] = c2r2;
@@ -183,14 +192,14 @@ mat2x2& mat2x2::operator = (const mat2x2 &Matrix)
 	return *this;
 }
 
-float& mat2x2::operator [] (int i)
+double& mat2x2::operator [] (int i)
 {
 	return M[i];
 }
 
-float* mat2x2::operator & ()
+double* mat2x2::operator & ()
 {
-	return (float*)this;
+	return (double*)this;
 }
 
 mat2x2 operator * (const mat2x2 &Matrix1, const mat2x2 &Matrix2)
@@ -224,9 +233,9 @@ vec2 operator * (const mat2x2 &Matrix, const vec2 &u)
 
 mat2x2 inverse(const mat2x2 &Matrix)
 {
-	const float *m = Matrix.M;
+	const double *m = Matrix.M;
 
-	float det = m[0] * m[3] - m[2] * m[1];
+	double det = m[0] * m[3] - m[2] * m[1];
 
 	mat2x2 Inverse;
 
@@ -254,9 +263,9 @@ mat2x2 transpose(const mat2x2 &Matrix)
 
 mat3x3::mat3x3()
 {
-	M[0] = 1.0f; M[3] = 0.0f; M[6] = 0.0f;
-	M[1] = 0.0f; M[4] = 1.0f; M[7] = 0.0f;
-	M[2] = 0.0f; M[5] = 0.0f; M[8] = 1.0f;
+	M[0] = 1.0; M[3] = 0.0; M[6] = 0.0;
+	M[1] = 0.0; M[4] = 1.0; M[7] = 0.0;
+	M[2] = 0.0; M[5] = 0.0; M[8] = 1.0;
 }
 
 mat3x3::~mat3x3()
@@ -278,7 +287,7 @@ mat3x3::mat3x3(const vec3 &col1, const vec3 &col2, const vec3 &col3)
 	M[2] = col1.z; M[5] = col2.z; M[8] = col3.z;
 }
 
-mat3x3::mat3x3(float c1r1, float c1r2, float c1r3, float c2r1, float c2r2, float c2r3, float c3r1, float c3r2, float c3r3)
+mat3x3::mat3x3(double c1r1, double c1r2, double c1r3, double c2r1, double c2r2, double c2r3, double c3r1, double c3r2, double c3r3)
 {
 	M[0] = c1r1; M[3] = c2r1; M[6] = c3r1;
 	M[1] = c1r2; M[4] = c2r2; M[7] = c3r2;
@@ -287,9 +296,9 @@ mat3x3::mat3x3(float c1r1, float c1r2, float c1r3, float c2r1, float c2r2, float
 
 mat3x3::mat3x3(const mat2x2 &Matrix)
 {
-	M[0] = Matrix.M[0]; M[3] = Matrix.M[2]; M[6] = 0.0f;
-	M[1] = Matrix.M[1]; M[4] = Matrix.M[3]; M[7] = 0.0f;
-	M[2] = 0.0f; M[5] = 0.0f; M[8] = 1.0f;
+	M[0] = Matrix.M[0]; M[3] = Matrix.M[2]; M[6] = 0.0;
+	M[1] = Matrix.M[1]; M[4] = Matrix.M[3]; M[7] = 0.0;
+	M[2] = 0.0; M[5] = 0.0; M[8] = 1.0;
 }
 
 mat3x3::mat3x3(const mat4x4 &Matrix)
@@ -309,14 +318,14 @@ mat3x3& mat3x3::operator = (const mat3x3 &Matrix)
 	return *this;
 }
 
-float& mat3x3::operator [] (int i)
+double& mat3x3::operator [] (int i)
 {
 	return M[i];
 }
 
-float* mat3x3::operator & ()
+double* mat3x3::operator & ()
 {
-	return (float*)this;
+	return (double*)this;
 }
 
 mat3x3 operator * (const mat3x3 &Matrix1, const mat3x3 &Matrix2)
@@ -355,16 +364,16 @@ vec3 operator * (const mat3x3 &Matrix, const vec3 &u)
 //
 // ----------------------------------------------------------------------------------------------------------------------------
 
-float det2x2sub(const float *m, int i0, int i1, int i2, int i3)
+double det2x2sub(const double *m, int i0, int i1, int i2, int i3)
 {
 	return m[i0] * m[i3] - m[i2] * m[i1];
 }
 
 mat3x3 inverse(const mat3x3 &Matrix)
 {
-	const float *m = Matrix.M;
+	const double *m = Matrix.M;
 
-	float det = 0.0f;
+	double det = 0.0;
 
 	det += m[0] * det2x2sub(m, 4, 5, 7, 8);
 	det -= m[3] * det2x2sub(m, 1, 2, 7, 8);
@@ -406,10 +415,10 @@ mat3x3 transpose(const mat3x3 &Matrix)
 
 mat4x4::mat4x4()
 {
-	M[0] = 1.0f; M[4] = 0.0f; M[8] = 0.0f; M[12] = 0.0f;
-	M[1] = 0.0f; M[5] = 1.0f; M[9] = 0.0f; M[13] = 0.0f;
-	M[2] = 0.0f; M[6] = 0.0f; M[10] = 1.0f; M[14] = 0.0f;
-	M[3] = 0.0f; M[7] = 0.0f; M[11] = 0.0f; M[15] = 1.0f;
+	M[0] = 1.0; M[4] = 0.0; M[8] = 0.0; M[12] = 0.0;
+	M[1] = 0.0; M[5] = 1.0; M[9] = 0.0; M[13] = 0.0;
+	M[2] = 0.0; M[6] = 0.0; M[10] = 1.0; M[14] = 0.0;
+	M[3] = 0.0; M[7] = 0.0; M[11] = 0.0; M[15] = 1.0;
 }
 
 mat4x4::~mat4x4()
@@ -432,7 +441,7 @@ mat4x4::mat4x4(const vec4 &col1, const vec4 &col2, const vec4 &col3, const vec4 
 	M[3] = col1.w; M[7] = col2.w; M[11] = col3.w; M[15] = col4.w;
 }
 
-mat4x4::mat4x4(float c1r1, float c1r2, float c1r3, float c1r4, float c2r1, float c2r2, float c2r3, float c2r4, float c3r1, float c3r2, float c3r3, float c3r4, float c4r1, float c4r2, float c4r3, float c4r4)
+mat4x4::mat4x4(double c1r1, double c1r2, double c1r3, double c1r4, double c2r1, double c2r2, double c2r3, double c2r4, double c3r1, double c3r2, double c3r3, double c3r4, double c4r1, double c4r2, double c4r3, double c4r4)
 {
 	M[0] = c1r1; M[4] = c2r1; M[8] = c3r1; M[12] = c4r1;
 	M[1] = c1r2; M[5] = c2r2; M[9] = c3r2; M[13] = c4r2;
@@ -442,18 +451,18 @@ mat4x4::mat4x4(float c1r1, float c1r2, float c1r3, float c1r4, float c2r1, float
 
 mat4x4::mat4x4(const mat2x2 &Matrix)
 {
-	M[0] = Matrix.M[0]; M[4] = Matrix.M[2]; M[8] = 0.0f; M[12] = 0.0f;
-	M[1] = Matrix.M[1]; M[5] = Matrix.M[3]; M[9] = 0.0f; M[13] = 0.0f;
-	M[2] = 0.0f; M[6] = 0.0f; M[10] = 1.0f; M[14] = 0.0f;
-	M[3] = 0.0f; M[7] = 0.0f; M[11] = 0.0f; M[15] = 1.0f;
+	M[0] = Matrix.M[0]; M[4] = Matrix.M[2]; M[8] = 0.0; M[12] = 0.0;
+	M[1] = Matrix.M[1]; M[5] = Matrix.M[3]; M[9] = 0.0; M[13] = 0.0;
+	M[2] = 0.0; M[6] = 0.0; M[10] = 1.0; M[14] = 0.0;
+	M[3] = 0.0; M[7] = 0.0; M[11] = 0.0; M[15] = 1.0;
 }
 
 mat4x4::mat4x4(const mat3x3 &Matrix)
 {
-	M[0] = Matrix.M[0]; M[4] = Matrix.M[3]; M[8] = Matrix.M[6]; M[12] = 0.0f;
-	M[1] = Matrix.M[1]; M[5] = Matrix.M[4]; M[9] = Matrix.M[7]; M[13] = 0.0f;
-	M[2] = Matrix.M[2]; M[6] = Matrix.M[5]; M[10] = Matrix.M[8]; M[14] = 0.0f;
-	M[3] = 0.0f; M[7] = 0.0f; M[11] = 0.0f; M[15] = 1.0f;
+	M[0] = Matrix.M[0]; M[4] = Matrix.M[3]; M[8] = Matrix.M[6]; M[12] = 0.0;
+	M[1] = Matrix.M[1]; M[5] = Matrix.M[4]; M[9] = Matrix.M[7]; M[13] = 0.0;
+	M[2] = Matrix.M[2]; M[6] = Matrix.M[5]; M[10] = Matrix.M[8]; M[14] = 0.0;
+	M[3] = 0.0; M[7] = 0.0; M[11] = 0.0; M[15] = 1.0;
 }
 
 mat4x4& mat4x4::operator = (const mat4x4 &Matrix)
@@ -466,14 +475,14 @@ mat4x4& mat4x4::operator = (const mat4x4 &Matrix)
 	return *this;
 }
 
-float& mat4x4::operator [] (int i)
+double& mat4x4::operator [] (int i)
 {
 	return M[i];
 }
 
-float* mat4x4::operator & ()
+double* mat4x4::operator & ()
 {
-	return (float*)this;
+	return (double*)this;
 }
 
 mat4x4 operator * (const mat4x4 &Matrix1, const mat4x4 &Matrix2)
@@ -514,8 +523,8 @@ vec4 operator * (const mat4x4 &Matrix, const vec4 &u)
 
 // ----------------------------------------------------------------------------------------------------------------------------
 
-mat4x4 BiasMatrix = mat4x4(0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f);
-mat4x4 BiasMatrixInverse = mat4x4(2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, -1.0f, -1.0f, -1.0f, 1.0f);
+mat4x4 BiasMatrix = mat4x4(0.5f, 0.0, 0.0, 0.0, 0.0, 0.5f, 0.0, 0.0, 0.0, 0.0, 0.5f, 0.0, 0.5f, 0.5f, 0.5f, 1.0);
+mat4x4 BiasMatrixInverse = mat4x4(2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, -1.0, -1.0, -1.0, 1.0);
 
 // ----------------------------------------------------------------------------------------------------------------------------
 //
@@ -526,9 +535,9 @@ mat4x4 BiasMatrixInverse = mat4x4(2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f
 //
 // ----------------------------------------------------------------------------------------------------------------------------
 
-float det3x3sub(const float *m, int i0, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8)
+double det3x3sub(const double *m, int i0, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8)
 {
-	float det = 0.0f;
+	double det = 0.0;
 
 	det += m[i0] * det2x2sub(m, i4, i5, i7, i8);
 	det -= m[i3] * det2x2sub(m, i1, i2, i7, i8);
@@ -539,9 +548,9 @@ float det3x3sub(const float *m, int i0, int i1, int i2, int i3, int i4, int i5, 
 
 mat4x4 inverse(const mat4x4 &Matrix)
 {
-	const float *m = Matrix.M;
+	const double *m = Matrix.M;
 
-	float det = 0.0f;
+	double det = 0.0;
 	
 	det += m[0] * det3x3sub(m, 5, 6, 7, 9, 10, 11, 13, 14, 15);
 	det -= m[4] * det3x3sub(m, 1, 2, 3, 9, 10, 11, 13, 14, 15);
@@ -594,13 +603,13 @@ mat4x4 look(const vec3 &eye, const vec3 &center, const vec3 &up)
 	return View;
 }
 
-mat4x4 ortho(float left, float right, float bottom, float top, float n, float f)
+mat4x4 ortho(double left, double right, double bottom, double top, double n, double f)
 {
 	mat4x4 Ortho;
 
-	Ortho.M[0] = 2.0f / (right - left);
-	Ortho.M[5] = 2.0f / (top - bottom);
-	Ortho.M[10] = -2.0f / (f - n);
+	Ortho.M[0] = 2.0 / (right - left);
+	Ortho.M[5] = 2.0 / (top - bottom);
+	Ortho.M[10] = -2.0 / (f - n);
 	Ortho.M[12] = -(right + left) / (right - left);
 	Ortho.M[13] = -(top + bottom) / (top - bottom);
 	Ortho.M[14] = -(f + n) / (f - n);
@@ -608,46 +617,46 @@ mat4x4 ortho(float left, float right, float bottom, float top, float n, float f)
 	return Ortho;
 }
 
-mat4x4 perspective(float fovy, float aspect, float n, float f)
+mat4x4 perspective(double fovy, double aspect, double n, double f)
 {
 	mat4x4 Perspective;
 
-	float coty = 1.0f / tan(fovy * (float)M_PI / 360.0f);
+	double coty = 1.0 / tan(fovy * (double)M_PI / 360.0);
 
 	Perspective.M[0] = coty / aspect;
 	Perspective.M[5] = coty;
 	Perspective.M[10] = (n + f) / (n - f);
-	Perspective.M[11] = -1.0f;
-	Perspective.M[14] = 2.0f * n * f / (n - f);
-	Perspective.M[15] = 0.0f;
+	Perspective.M[11] = -1.0;
+	Perspective.M[14] = 2.0 * n * f / (n - f);
+	Perspective.M[15] = 0.0;
 
 	return Perspective;
 }
 
-mat4x4 rotate(float angle, const vec3 &u)
+mat4x4 rotate(double angle, const vec3 &u)
 {
 	mat4x4 Rotate;
 
-	angle = angle / 180.0f * (float)M_PI;
+	angle = angle / 180.0 * (double)M_PI;
 
 	vec3 v = normalize(u);
 
-	float c = 1.0f - cos(angle), s = sin(angle);
+	double c = 1.0 - cos(angle), s = sin(angle);
 
-	Rotate.M[0] = 1.0f + c * (v.x * v.x - 1.0f);
+	Rotate.M[0] = 1.0 + c * (v.x * v.x - 1.0);
 	Rotate.M[1] = c * v.x * v.y + v.z * s;
 	Rotate.M[2] = c * v.x * v.z - v.y * s;
 	Rotate.M[4] = c * v.x * v.y - v.z * s;
-	Rotate.M[5] = 1.0f + c * (v.y * v.y - 1.0f);
+	Rotate.M[5] = 1.0 + c * (v.y * v.y - 1.0);
 	Rotate.M[6] = c * v.y * v.z + v.x * s;
 	Rotate.M[8] = c * v.x * v.z + v.y * s;
 	Rotate.M[9] = c * v.y * v.z - v.x * s;
-	Rotate.M[10] = 1.0f + c * (v.z * v.z - 1.0f);
+	Rotate.M[10] = 1.0 + c * (v.z * v.z - 1.0);
 
 	return Rotate;
 }
 
-mat4x4 scale(float x, float y, float z)
+mat4x4 scale(double x, double y, double z)
 {
 	mat4x4 Scale;
 
@@ -658,7 +667,7 @@ mat4x4 scale(float x, float y, float z)
 	return Scale;
 }
 
-mat4x4 translate(float x, float y, float z)
+mat4x4 translate(double x, double y, double z)
 {
 	mat4x4 Translate;
 

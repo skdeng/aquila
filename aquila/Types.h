@@ -3,19 +3,26 @@
 
 #include "glmath.h"
 
+
+//! Precision of aq_floating number being used
+typedef double aq_float;
+
 typedef vec2 Sample;
 typedef vec3 Color;
 
 class Primitive;
+struct Ray;
 
 class Transformation
 {
 public:
+	Transformation();
 	Transformation(const mat4x4& aM);
 
 	friend vec4 operator*(const Transformation& aM, const vec4& aV);
 	friend vec3 operator*(const Transformation& aM, const vec3& aV);
-private:
+	friend Ray operator*(const Transformation& aM, const Ray& aRay);
+
 	mat4x4 mM, mMinv;
 };
 
@@ -40,12 +47,23 @@ struct BRDF
 	Color ka;
 	//! Reflectance coefficient
 	Color kr;
-
-	float hardness;
+	
+	//! Hardness for specular reflection
+	aq_float Hardness;
+	//! Transparency
+	aq_float Transparency;
+	aq_float RefractiveIndex;
 
 	BRDF(){}
-	BRDF(Color aKD, Color aKS, Color aKA, Color aKR, float aHardness) :
-		kd(aKD), ks(aKS), ka(aKA), kr(aKR), hardness(aHardness) {}
+	BRDF(Color aKD, Color aKS, Color aKA, Color aKR, aq_float aHardness, aq_float aTransparency, aq_float aReflectiveIndex) :
+		kd(aKD),
+		ks(aKS), 
+		ka(aKA), 
+		kr(aKR), 
+		Hardness(aHardness),
+		Transparency(aTransparency),
+		RefractiveIndex(aReflectiveIndex)
+	{}
 };
 
 //! Intersection point information in world-space
@@ -54,6 +72,7 @@ struct Intersection
 	LocalGeo Local;
 	BRDF Material;
 	Primitive* Object = nullptr;
+	int RecusiveDepth = 0;
 };
 
 #endif

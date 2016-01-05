@@ -9,14 +9,14 @@ struct Ray
 {
 	vec3 Pos;
 	vec3 Dir;
-	float TMax, TMin;
+	aq_float TMax, TMin;
 
 	Ray()
 	{
 
 	}
 
-	Ray(vec3 aPos, vec3 aDir, float aTMax = CONSTANT::RAY_MAXIMUM, float aTMin = CONSTANT::RAY_MINIMUM)
+	Ray(vec3 aPos, vec3 aDir, aq_float aTMax = CONSTANT::RAY_MAXIMUM, aq_float aTMin = CONSTANT::RAY_MINIMUM)
 	{
 		Pos = aPos;
 		Dir = aDir;
@@ -24,7 +24,7 @@ struct Ray
 		TMin = aTMin;
 	}
 
-	friend vec3 operator+(Ray r, float t)
+	friend vec3 operator+(Ray r, aq_float t)
 	{
 		return r.Pos + t * r.Dir;
 	}

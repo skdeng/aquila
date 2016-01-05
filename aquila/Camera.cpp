@@ -5,7 +5,7 @@ Camera::Camera()
 
 }
 
-Camera::Camera(const vec3& aPosition, const vec3& aDirection, const vec3& aUp, const float aFOV, const int aScreenWidth, const int aScreenHeight)
+Camera::Camera(const vec3& aPosition, const vec3& aDirection, const vec3& aUp, const aq_float aFOV, const int aScreenWidth, const int aScreenHeight)
 {
 	SetPosition(aPosition);
 	SetDirection(aDirection, aUp);
@@ -19,16 +19,16 @@ Camera::~Camera()
 
 }
 
-void Camera::GetRay(const Sample& aSample, Ray* aRay, const float offsetX, const float offsetY)
+void Camera::GetRay(const Sample& aSample, Ray* aRay, const aq_float offsetX, const aq_float offsetY)
 {
-	float FOVX = mFOV * mScreenWidth / mScreenHeight;
+	aq_float FOVX = mFOV * mScreenWidth / mScreenHeight;
 	
-	float thetaX = (float)std::tan(Utils::DegToRad(FOVX) / 2.0f);
-	float thetaY = (float)std::tan(Utils::DegToRad(mFOV) / 2.0f);
-	float halfWidth = mScreenWidth / 2.0f;
-	float halfHeight = mScreenHeight / 2.0f;
-	float alpha = thetaX * ((aSample.x + offsetX) - halfWidth) / halfWidth;
-	float beta = thetaY * (halfHeight - (aSample.y + offsetY)) / halfHeight;
+	aq_float thetaX = (aq_float)std::tan(Utils::DegToRad(FOVX) / 2.0);
+	aq_float thetaY = (aq_float)std::tan(Utils::DegToRad(mFOV) / 2.0);
+	aq_float halfWidth = mScreenWidth / 2.0;
+	aq_float halfHeight = mScreenHeight / 2.0;
+	aq_float alpha = thetaX * ((aSample.x + offsetX) - halfWidth) / halfWidth;
+	aq_float beta = thetaY * (halfHeight - (aSample.y + offsetY)) / halfHeight;
 
 	aRay->Pos = mPosition;
 	aRay->Dir = normalize(alpha * mU + beta * mV - mW);
@@ -48,7 +48,7 @@ void Camera::SetDirection(const vec3& aDirection, const vec3& aUp)
 	mV = cross(mW, mU);		mV = normalize(mV);
 }
 
-void Camera::SetVerticalFOV(const float aFOV)
+void Camera::SetVerticalFOV(const aq_float aFOV)
 {
 	mFOV = aFOV;
 }

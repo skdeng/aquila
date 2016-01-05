@@ -86,7 +86,7 @@ bool Main::OnInit()
 		return false;
 
 	mSampler = std::make_unique<Sampler>(mScene.Properties.ImageWidth, mScene.Properties.ImageHeight);
-	mCamera = std::make_unique<Camera>(vec3(0.0f, 2.0f, 5.0f), vec3(0.0f, -2.0f, -5.0f), vec3(0.0f, 1.0f, 0.0f), 45.0f, mScene.Properties.ImageWidth, mScene.Properties.ImageHeight);
+	mCamera = std::make_unique<Camera>(mScene.Properties.CameraPos, mScene.Properties.CameraDir, mScene.Properties.CameraUp, 45.0, mScene.Properties.ImageWidth, mScene.Properties.ImageHeight);
 	mRaytracer.SetScene(&mScene);
 	mImage = std::make_unique<Image>(mRenderer, mScene.Properties.ImageWidth, mScene.Properties.ImageHeight);
 
@@ -102,16 +102,20 @@ void Main::OnUpdate()
 {
 	mPixelColor = COLOR::BLACK;
 	Color TempColor;
-	for (int i = 0; i < mScene.Properties.PrimarySample; i++)
+	aq_float Offset = 1.0 / (mScene.Properties.PrimarySample + 1.0);
+	for (int i = 1; i <= mScene.Properties.PrimarySample; i++)
 	{
-		float offX = Utils::RandFloat() - 0.5;
-		float offY = Utils::RandFloat() - 0.5;
+		for (int j = 1; j <= mScene.Properties.PrimarySample; j++)
+		{
+			double offX = i * Offset - 0.5;
+			double offY = j * Offset - 0.5;
 
-		mCamera->GetRay(mSample, &mEyeRay, offX, offY);
-		mRaytracer.Trace(mEyeRay, &TempColor);
-		mPixelColor += TempColor;
+			mCamera->GetRay(mSample, &mEyeRay, offX, offY);
+			mRaytracer.Trace(mEyeRay, &TempColor);
+			mPixelColor += TempColor;
+		}
 	}
-	mPixelColor /= mScene.Properties.PrimarySample;
+	mPixelColor /= mScene.Properties.PrimarySample * mScene.Properties.PrimarySample;
 	mImage->Commit(mSample, mPixelColor);
 }
 

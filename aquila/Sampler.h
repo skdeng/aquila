@@ -13,7 +13,7 @@ public:
 	/*!
 		\return true if pixel is within range of the screen, false otherwise
 	*/
-	bool GetSample(Sample* aSample, float aX, float aY);
+	bool GetSample(Sample* aSample, aq_float aX, aq_float aY);
 
 	//! Get a sample at the next pixel
 	/*!
@@ -23,7 +23,7 @@ public:
 
 private:
 	int mScreenHeight, mScreenWidth;
-	float mCurrentX, mCurrentY;
+	aq_float mCurrentX, mCurrentY;
 };
 
 #endif

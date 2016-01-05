@@ -1,0 +1,18 @@
+{
+	"image_width":800,
+	"image_height":600,
+	"background_color":"0 0 0.2",
+	"primary_sample":4,
+
+	"cam":
+	{
+		"pos":"0 0 5",
+		"dir":"0 0 -1",
+		"up":"0 1 1"
+	},
+
+	"lights":
+	{
+
+	}
+}

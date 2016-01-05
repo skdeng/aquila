@@ -16,11 +16,13 @@ public:
 		int ImageHeight = 600;
 		Color BackgroundColor = COLOR::BLACK;
 
-		int PrimarySample = 16;
+		int PrimarySample = 4;
 
-		vec3 CameraPos = vec3(0.0f, 0.0f, 5.0f);
-		vec3 CameraDir = vec3(0.0f, 0.0f, -1.0f);
-		vec3 CameraUp = vec3(0.0f, 1.0f, 0.0f);
+		vec3 CameraPos = vec3(1.0, 2.0, 10.0);
+		vec3 CameraDir = vec3(0.0, -2.0, -10.0);
+		vec3 CameraUp = vec3(0.0, 1.0, 0.0);
+
+		int RecursiveDepth = 16;
 	};
 
 public:
@@ -29,7 +31,7 @@ public:
 
 	void InitScene();
 	void InitScene(const char* aSceneFile);
-	bool Intersect(const Ray& aRay, float *aT, Intersection* aIntersection);
+	bool Intersect(const Ray& aRay, aq_float *aT, Intersection* aIntersection);
 	//bool Intersect(const Ray& aRay);
 
 	const std::vector<Light*>& GetLights()
@@ -43,6 +45,7 @@ public:
 private:
 	std::vector<Primitive*> mSceneObjects;
 	std::vector<Light*> mLights;
+	std::vector<BRDF*> mMaterials;
 
 	Prop mProperties;
 };

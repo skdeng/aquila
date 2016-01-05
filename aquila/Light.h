@@ -21,14 +21,14 @@ public:
 
 protected:
 	vec3 mColor;
-	float mIntensity;
+	aq_float mIntensity;
 };
 
 class DirectionalLight : public Light
 {
 public:
 	DirectionalLight();
-	DirectionalLight(const Color& aColor, const vec3& aDirection, const float aIntensity);
+	DirectionalLight(const Color& aColor, const vec3& aDirection, const aq_float aIntensity);
 	~DirectionalLight();
 
 	void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor);
@@ -44,7 +44,7 @@ class PointLight : public Light
 {
 public:
 	PointLight();
-	PointLight(const Color& aColor, const vec3& aPosition, const float aIntensity);
+	PointLight(const Color& aColor, const vec3& aPosition, const aq_float aIntensity);
 	~PointLight();
 
 	void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor);
@@ -53,9 +53,9 @@ public:
 		return POINT;
 	}
 private:
-	static const float ConstantAttenuation;
-	static const float LinearAttenuation;
-	static const float QuadraticAttenuation;
+	static const aq_float ConstantAttenuation;
+	static const aq_float LinearAttenuation;
+	static const aq_float QuadraticAttenuation;
 
 	vec3 mPosition;
 

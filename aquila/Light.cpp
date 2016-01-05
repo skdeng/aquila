@@ -15,7 +15,7 @@ DirectionalLight::DirectionalLight()
 
 }
 
-DirectionalLight::DirectionalLight(const Color& aColor, const vec3& aDirection, const float aIntensity)
+DirectionalLight::DirectionalLight(const Color& aColor, const vec3& aDirection, const aq_float aIntensity)
 {
 	mColor = aColor;
 	mDirection = normalize(aDirection);
@@ -38,16 +38,16 @@ void DirectionalLight::GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, 
 
 //============================================================================================================
 
-const float PointLight::ConstantAttenuation = 1.0f;
-const float PointLight::LinearAttenuation = 0.007f;
-const float PointLight::QuadraticAttenuation = 0.0002f;
+const aq_float PointLight::ConstantAttenuation = 1.0;
+const aq_float PointLight::LinearAttenuation = 0.007f;
+const aq_float PointLight::QuadraticAttenuation = 0.0002f;
 
 PointLight::PointLight()
 {
 
 }
 
-PointLight::PointLight(const Color& aColor, const vec3& aPosition, const float aIntensity)
+PointLight::PointLight(const Color& aColor, const vec3& aPosition, const aq_float aIntensity)
 {
 	mColor = aColor;
 	mPosition = aPosition;
@@ -63,12 +63,12 @@ PointLight::~PointLight()
 
 void PointLight::GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor)
 {
-	float LightDist = length(mPosition - aLocal.Pos);
-	float Attenuation = ConstantAttenuation + LightDist * LinearAttenuation + LightDist * LightDist * QuadraticAttenuation;
+	aq_float LightDist = length(mPosition - aLocal.Pos);
+	aq_float Attenuation = ConstantAttenuation + LightDist * LinearAttenuation + LightDist * LightDist * QuadraticAttenuation;
 	*aLightColor = mColor * mIntensity;
 
 	aLightRay->Dir = normalize(mPosition - aLocal.Pos);
 	aLightRay->Pos = aLocal.Pos;
-	aLightRay->TMax = CONSTANT::RAY_MAXIMUM;
+	aLightRay->TMax = ((mPosition - aLocal.Pos) / aLightRay->Dir).x;
 	aLightRay->TMin = CONSTANT::RAY_MINIMUM;
 }

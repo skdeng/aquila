@@ -1,5 +1,7 @@
 #include "Shape.h"
 
+#include "Main.h"
+
 Primitive::Primitive()
 {
 
@@ -10,14 +12,19 @@ Primitive::~Primitive()
 
 }
 
+Primitive* Primitive::Transform(const Transformation& aM)
+{
+	mM = aM;
+	return this;
+}
+
 //=================================================================================================
 
-Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const Color& aColor)
+Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const BRDF& aMaterial)
 {
 	mA = aA;
 	mB = aB;
 	mC = aC;
-	mColor = aColor;
 
 	mAB = aB - aA;
 	mAC = aC - aA;
@@ -25,10 +32,7 @@ Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const Color& 
 	mNormal = cross(mAC, mAB);
 	mNormal = normalize(mNormal);
 
-	mMaterial.kd = mColor;
-	mMaterial.ks = COLOR::WHITE;
-	mMaterial.ka = mColor * 0.1f;
-	mMaterial.kr = Color(0.2f, 0.2f, 0.2f);
+	mMaterial = aMaterial;
 }
 
 Triangle::~Triangle()
@@ -36,19 +40,19 @@ Triangle::~Triangle()
 
 }
 
-bool Triangle::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
+bool Triangle::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection)
 {
 	const vec3& RayOrigin = aRay.Pos;
 	const vec3& RayDir = aRay.Dir;
 
 	//check if ray is parallel to the plane
 	//I consider tangent as non-intersecting
-	float theta = dot(RayDir, mNormal);
+	aq_float theta = dot(RayDir, mNormal);
 	if (theta == 0)
 		return false;
 
 	//calculate intersection
-	float tmpT = (dot(mA, mNormal) - dot(RayOrigin, mNormal)) / theta;
+	aq_float tmpT = (dot(mA, mNormal) - dot(RayOrigin, mNormal)) / theta;
 
 	//check boundaries
 	if (tmpT < aRay.TMin || tmpT > aRay.TMax)
@@ -82,23 +86,23 @@ bool Triangle::Inside(const vec3& aPoint)
 	vec3 BarycentricPoint;
 	Barycentric(aPoint, &BarycentricPoint);
 	DEBUG_LOG("Barycentric: (" + std::to_string(BarycentricPoint.x) + "," + std::to_string(BarycentricPoint.y) + "," + std::to_string(BarycentricPoint.z) + ")");
-	if (BarycentricPoint.x < 0.0f || BarycentricPoint.x > 1.0f ||
-		BarycentricPoint.y < 0.0f || BarycentricPoint.y > 1.0f ||
-		BarycentricPoint.z < 0.0f || BarycentricPoint.z > 1.0f)
+	if (BarycentricPoint.x < 0.0 || BarycentricPoint.x > 1.0 ||
+		BarycentricPoint.y < 0.0 || BarycentricPoint.y > 1.0 ||
+		BarycentricPoint.z < 0.0 || BarycentricPoint.z > 1.0)
 	{
 		return false;
 	}
 	return true;
 }
 
-bool Triangle::Inside(const float afX, const float afY, const float afZ)
+bool Triangle::Inside(const aq_float afX, const aq_float afY, const aq_float afZ)
 {
 	return Inside(vec3(afX, afY, afZ));
 }
 
 //=================================================================================================
 
-Sphere::Sphere(const vec3& aCenter, const float aRadius, const BRDF& aMaterial)
+Sphere::Sphere(const vec3& aCenter, const aq_float aRadius, const BRDF& aMaterial)
 {
 	mCenter = aCenter;
 	mRadius = aRadius;
@@ -110,22 +114,22 @@ Sphere::~Sphere()
 
 }
 
-bool Sphere::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
+bool Sphere::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection)
 {
 	vec3 oc = aRay.Pos - mCenter;
 
-	float det = std::pow(dot(aRay.Dir, oc), 2) - std::pow(length(oc), 2) + (mRadius * mRadius);
+	aq_float det = std::pow(dot(aRay.Dir, oc), 2) - std::pow(length(oc), 2) + (mRadius * mRadius);
 
 	//no intersection
 	if (det < 0)
 		return false;
 
-	float tmpT = -dot(aRay.Dir, oc);
+	aq_float tmpT = -dot(aRay.Dir, oc);
 
 	//determinant larger than zero => 2 intersections
 	if (det > 0)
 	{
-		float sqrtdet = std::sqrt(det);
+		aq_float sqrtdet = std::sqrt(det);
 		//find the closest intersection
 		if (sqrtdet > tmpT)
 			tmpT += sqrtdet;
@@ -166,14 +170,14 @@ Box::~Box()
 
 }
 
-bool Box::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
+bool Box::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection)
 {
-	vec3 Diff = 1.0f / aRay.Dir;
+	vec3 Diff = 1.0 / aRay.Dir;
 
 	vec3 TMin = elemul(mMin - aRay.Pos, Diff);
 	vec3 TMax = elemul(mMax - aRay.Pos, Diff);
 
-	float temp;
+	aq_float temp;
 	if (Diff.x < 0)
 	{
 		temp = TMin.x;
@@ -193,8 +197,8 @@ bool Box::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 		TMax.z = TMin.z;
 	}
 
-	float MaxTMin = std::max({ TMin.x, TMin.y, TMin.z });
-	float MinTMax = std::min({ TMax.x, TMax.y, TMax.z });
+	aq_float MaxTMin = std::max({ TMin.x, TMin.y, TMin.z });
+	aq_float MinTMax = std::min({ TMax.x, TMax.y, TMax.z });
 
 	if (MaxTMin < 0 || MinTMax < 0 || MaxTMin > MinTMax)
 	{
@@ -211,7 +215,8 @@ bool Box::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 		{
 			aIntersection->Object = this;
 			aIntersection->Material = mMaterial;
-			//TODO compute local geometry
+			aIntersection->Local.Pos = aRay + MaxTMin;
+			//TODO finish local
 		}
 		return true;
 	}
@@ -219,7 +224,7 @@ bool Box::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 
 //=================================================================================================
 
-Plane::Plane(const Transformation& aM, const BRDF& aMaterial1, const BRDF& aMaterial2) : mM(aM)
+Plane::Plane(const BRDF& aMaterial1, const BRDF& aMaterial2)
 {
 	mNormal = mM * vec3(0, 1, 0);
 	mOrigin = mM * vec3(0, 0, 0);
@@ -232,10 +237,10 @@ Plane::~Plane()
 
 }
 
-bool Plane::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
+bool Plane::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection)
 {
-	Ray TRay(mM * aRay.Pos, mM * aRay.Dir);
-	float Theta = dot(TRay.Dir, mNormal);
+	Ray TRay = mM * aRay;
+	aq_float Theta = dot(TRay.Dir, mNormal);
 
 	if (Theta > -CONSTANT::PLANE_HORIZON && Theta < CONSTANT::PLANE_HORIZON)
 	{
@@ -243,8 +248,8 @@ bool Plane::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 	}
 	else
 	{
-		float k = dot(-TRay.Pos, mNormal);
-		float TmpT = dot(mOrigin - TRay.Pos, mNormal) / Theta;
+		aq_float k = dot(-TRay.Pos, mNormal);
+		aq_float TmpT = dot(mOrigin - TRay.Pos, mNormal) / Theta;
 
 		if (TmpT < aRay.TMin || TmpT > aRay.TMax)
 			return false;
@@ -259,7 +264,7 @@ bool Plane::Intersect(const Ray& aRay, float* aT, Intersection* aIntersection)
 			aIntersection->Local.Normal = mNormal;
 			aIntersection->Local.Pos = aRay + TmpT;
 
-			if ((int(aIntersection->Local.Pos.x) + int(aIntersection->Local.Pos.z)) % 2 == 0)
+			if (int(std::floor(aIntersection->Local.Pos.x) + std::floor(aIntersection->Local.Pos.z)) % 2 == 0)
 				aIntersection->Material = mMaterial;
 			else
 				aIntersection->Material = mSecondaryMaterial;
