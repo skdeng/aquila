@@ -54,6 +54,26 @@ void Image::Save(const char* aFile)
 	SDL_FreeSurface(SaveSurface);
 }
 
+void Image::Bloom(double aThreshold)
+{
+	int r;
+	int g;
+	int b;
+
+	int luminance;
+	int luminanceData[3 * 256];
+
+	// pre-computations for conversion from RGB to YCC
+	for (int i = 0; i < 3 * 256; i += 3)
+	{
+		luminanceData[i] = (int)(i * 0.2125f);
+		luminanceData[i + 1] = (int)(i * 0.7154f);
+		luminanceData[i + 2] = (int)(i * 0.0721f);
+	}
+
+	//TODO finish bloom
+}
+
 uint32_t Image::ColorToRGBA(const Color& aColor)
 {
 	uint32_t rgba = 0;

@@ -80,7 +80,7 @@ bool Main::SetupSDL()
 
 bool Main::OnInit()
 {
-	mScene.InitScene();
+	mScene.InitScene("scene1.json");
 
 	if (!SetupSDL())
 		return false;

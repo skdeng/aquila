@@ -1,5 +1,14 @@
 #include "Raytracer.h"
 
+bool refract(const vec3& i, const vec3& n, double ior_ratio, vec3& r) {
+	auto cos_i = dot(-1 * i, n);
+	auto cos_t2 = ((double)1) - ior_ratio * ior_ratio *  (((double)1) - cos_i * cos_i);
+	if (cos_t2 <= 0)
+		return false;
+	r = ior_ratio * i + ((ior_ratio * cos_i - sqrt(abs(cos_t2))) * n);
+	return true;
+}
+
 Raytracer::Raytracer()
 {
 }
@@ -20,7 +29,7 @@ void Raytracer::Trace(const Ray& aRay, Color* aColor)
 	}
 	
 	*aColor = COLOR::BLACK;
-	std::cout << mScene->GetLights().size() << std::endl;
+
 	for (Light* light : mScene->GetLights())
 	{
 		*aColor += Shade(aRay, RayIntersection, *light);
@@ -28,22 +37,33 @@ void Raytracer::Trace(const Ray& aRay, Color* aColor)
 
 	*aColor = clamp(*aColor, 0.0, 1.0);
 
-	//Reflection
-	if (++RayIntersection.RecusiveDepth <= mScene->Properties.RecursiveDepth)
+	//Russian roulette for stopping recursive
+	if (++RayIntersection.RecusiveDepth > mScene->Properties.RecursiveDepth)
 	{
-		//Ray ReflectedRay(RayIntersection.Local.Pos, reflect(aRay.Dir, RayIntersection.Local.Normal));
-		//Color ReflectedColor;
-		//Trace(ReflectedRay, &ReflectedColor);
-		//*aColor = mix(*aColor, ReflectedColor, RayIntersection.Material.kr);
-		
-		if (RayIntersection.Material.Transparency > 0)
+		aq_float AvgReflectance = sum(RayIntersection.Material.kr) / 3;
+		if (AvgReflectance < Utils::RandFloatInterval(0.0, 1.2))
 		{
-			Ray RefractedRay(RayIntersection.Local.Pos, refract(aRay.Dir, RayIntersection.Local.Normal, RayIntersection.Material.RefractiveIndex));
-			Color RefractedColor;
-			Trace(RefractedRay, &RefractedColor);
-			*aColor = mix(*aColor, RefractedColor, RayIntersection.Material.Transparency);
+			return;
 		}
 	}
+
+	//Reflection
+	if (sum(RayIntersection.Material.kr) > 0)
+	{
+		Ray ReflectedRay(RayIntersection.Local.Pos, reflect(aRay.Dir, RayIntersection.Local.Normal));
+		Color ReflectedColor;
+		Trace(ReflectedRay, &ReflectedColor);
+		*aColor = mix(*aColor, ReflectedColor, RayIntersection.Material.kr);
+	}
+
+	////Refraction
+	//if (RayIntersection.Material.Transparency > 0)
+	//{
+	//	Ray RefractedRay(RayIntersection.Local.Pos, refract(aRay.Dir, RayIntersection.Local.Normal, RayIntersection.Material.RefractiveIndex));
+	//	Color RefractedColor;
+	//	Trace(RefractedRay, &RefractedColor);
+	//	*aColor = mix(*aColor, RefractedColor, RayIntersection.Material.Transparency);
+	//}
 }
 
 void Raytracer::SetScene(Scene* aScene)
@@ -56,7 +76,7 @@ Color Raytracer::Shade(const Ray& aRay, const Intersection& aIntersection, Light
 	Ray ShadowRay;
 	Color LightColor;
 	aLight.GenerateLightRay(aIntersection.Local, &ShadowRay, &LightColor);
-	if (mScene->Intersect(ShadowRay, nullptr, nullptr))
+	if (mScene->Intersect(ShadowRay))
 	{
 		return Color(0.0, 0.0, 0.0);
 	}

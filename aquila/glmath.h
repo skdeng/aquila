@@ -133,6 +133,7 @@ vec3 rotate(const vec3 &u, double angle, const vec3 &v);
 vec3 clamp(const vec3 &u, double min, double max);
 vec3 elemul(const vec3& u, const vec3& v);
 vec3 mix(const vec3& u, const vec3& v, const vec3& m);
+double sum(const vec3& u);
 
 // ----------------------------------------------------------------------------------------------------------------------------
 

@@ -6,6 +6,7 @@
 #include "Shape.h"
 
 #include <vector>
+#include <unordered_map>
 
 class Scene
 {
@@ -32,7 +33,7 @@ public:
 	void InitScene();
 	void InitScene(const char* aSceneFile);
 	bool Intersect(const Ray& aRay, aq_float *aT, Intersection* aIntersection);
-	//bool Intersect(const Ray& aRay);
+	bool Intersect(const Ray& aRay);
 
 	const std::vector<Light*>& GetLights()
 	{
@@ -45,7 +46,7 @@ public:
 private:
 	std::vector<Primitive*> mSceneObjects;
 	std::vector<Light*> mLights;
-	std::vector<BRDF*> mMaterials;
+	std::unordered_map<std::string, BRDF*> mMaterial;
 
 	Prop mProperties;
 };

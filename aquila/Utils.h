@@ -41,13 +41,13 @@ namespace Utils
 	//!Returns a random integer between x and y
 	inline int RandInt(int x, int y) { return rand() % (y - x + 1) + x; }
 	//!Returns a random aq_float between zero and 1
-	inline double Randaq_float() { return (rand()) / (RAND_MAX + 1.0); }
+	inline double RandFloat() { return (rand()) / (RAND_MAX + 1.0); }
 	//!Returns a random aq_float between the given interval
-	inline double Randaq_floatInterval(double min, double max) { double interval = max - min;	return min + interval*Randaq_float(); }
+	inline double RandFloatInterval(double min, double max) { double interval = max - min;	return min + interval*RandFloat(); }
 	//!Returns a random bool
 	inline bool RandBool() { if (RandInt(0, 1)) return true;	else return false; }
 	//!Returns a random aq_float in the range -1 < n < 1
-	inline double RandNormal() { return Randaq_float() - Randaq_float(); }
+	inline double RandNormal() { return RandFloat() - RandFloat(); }
 }
 
 #endif

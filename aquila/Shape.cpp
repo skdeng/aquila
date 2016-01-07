@@ -127,12 +127,17 @@ bool Sphere::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersectio
 	aq_float tmpT = -dot(aRay.Dir, oc);
 
 	//determinant larger than zero => 2 intersections
+	bool Inside = false;
 	if (det > 0)
 	{
 		aq_float sqrtdet = std::sqrt(det);
 		//find the closest intersection
 		if (sqrtdet > tmpT)
+		{
 			tmpT += sqrtdet;
+			//originating inside the sphere
+			Inside = true;
+		}
 		else
 			tmpT -= sqrtdet;
 	}
@@ -151,6 +156,11 @@ bool Sphere::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersectio
 		aIntersection->Local.Normal = aIntersection->Local.Pos - mCenter;
 		aIntersection->Local.Normal = normalize(aIntersection->Local.Normal);
 		aIntersection->Material = mMaterial;
+		if (Inside)
+		{
+			aIntersection->Local.Normal *= -1;
+			aIntersection->Material.RefractiveIndex = 1.0 / aIntersection->Material.RefractiveIndex;
+		}
 	}
 
 	return true;

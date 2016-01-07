@@ -7,15 +7,15 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	for (unsigned int i = 0; i < mMaterials.size(); i++)
+	for (auto itr = mMaterial.begin(); itr != mMaterial.end(); itr++)
 	{
-		if (mMaterials[i] != nullptr)
+		if (itr->second != nullptr)
 		{
-			delete mMaterials[i];
-			mMaterials[i] = nullptr;
+			delete itr->second;
+			itr->second = nullptr;
 		}
 	}
-	mMaterials.clear();
+	mMaterial.clear();
 
 	for (unsigned int i = 0; i < mSceneObjects.size(); i++)
 	{
@@ -42,10 +42,10 @@ void Scene::InitScene()
 {
 	mSceneObjects.push_back(new Plane(MATERIAL::SILVER, MATERIAL::BLUE_MATT));
 	mSceneObjects.push_back(new Sphere(vec3(0, 1, 0), 1.0, MATERIAL::GOLD));
-	mSceneObjects.push_back(new Sphere(vec3(2, 0.7, 0), 0.5, MATERIAL::BLUE_MATT));
-	mSceneObjects.push_back(new Triangle(vec3(0.0, 0.5, 3), vec3(-2, 0.5, 3), vec3(-1, 2, 3), MATERIAL::GLASS));
+	mSceneObjects.push_back(new Sphere(vec3(2, 0.5, 0.5), 0.5, MATERIAL::MIRROR));
+	//mSceneObjects.push_back(new Triangle(vec3(0.0, 0.5, 3), vec3(-2, 0.5, 3), vec3(-1, 2, 3), MATERIAL::GLASS));
 	//mLights.push_back(new DirectionalLight(Color(1.0, 1.0, 1.0), vec3(1, 1, -1), 1));
-	mLights.push_back(new PointLight(Color(1.0, 1.0, 1.0), vec3(6.0, 4.0, 10.0), 0.8));
+	mLights.push_back(new PointLight(Color(1.0, 1.0, 1.0), vec3(6.0, 2.0, 10.0), 0.8));
 	mLights.push_back(new PointLight(Color(1.0, 1.0, 1.0), vec3(-2.0, 1.0, 4.0), 0.8));
 }
 
@@ -58,10 +58,10 @@ void Scene::InitScene(const char* aSceneFile)
 		return;
 	}
 
-	char FileBuf[1024];
+	char FileBuf[10240];
 	try
 	{
-		fin.get(FileBuf, 1024, '\0');
+		fin.get(FileBuf, 10240, '\0');
 	}
 	catch (std::ios::failure& e)
 	{
@@ -82,33 +82,49 @@ void Scene::InitScene(const char* aSceneFile)
 	mProperties.CameraDir = vec3(Doc["cam"]["dir"].GetString());
 	mProperties.CameraUp = vec3(Doc["cam"]["up"].GetString());
 
+	//Parse materials
+	for (rapidjson::SizeType i = 0; i < Doc["materials"].Size(); i++)
+	{
+		BRDF* Mat = new BRDF(
+			Color(Doc["materials"][i]["diffuse"].GetString()),
+			Color(Doc["materials"][i]["specular"].GetString()),
+			Color(Doc["materials"][i]["reflectance"].GetString()),
+			Doc["materials"][i]["hardness"].GetDouble(),
+			Doc["materials"][i]["transparency"].GetDouble(),
+			Doc["materials"][i]["refractive_index"].GetDouble()
+			);
+		mMaterial.insert({ Doc["materials"][i]["name"].GetString(), Mat });
+	}
+
 	//Parse scene lights
-	mLights.reserve(Doc["lights"]["count"].GetInt());
-	for (auto itr = Doc["lights"].MemberBegin(); itr != Doc["lights"].MemberEnd(); itr++)
+	for (rapidjson::SizeType i = 0; i < Doc["lights"].Size(); i++)
 	{
 		Light* NewLight;
-		if (itr->value["type"].GetString() == "directional")
+		std::string Type = Doc["lights"][i]["type"].GetString();
+		if (Type == "directional")
 		{
-			NewLight = new DirectionalLight(Color(itr->value["color"].GetString()), Color(itr->value["dir"].GetString()), itr->value["intensity"].GetDouble());
+			NewLight = new DirectionalLight(Color(Doc["lights"][i]["color"].GetString()), Color(Doc["lights"][i]["dir"].GetString()), Doc["lights"][i]["intensity"].GetDouble());
 		}
-		else if (itr->value["type"].GetString() == "point")
+		else if (Type == "point")
 		{
-			NewLight = new PointLight(Color(itr->value["color"].GetString()), Color(itr->value["pos"].GetString()), itr->value["intensity"].GetDouble());
+			NewLight = new PointLight(Color(Doc["lights"][i]["color"].GetString()), Color(Doc["lights"][i]["pos"].GetString()), Doc["lights"][i]["intensity"].GetDouble());
 		}
 		mLights.push_back(NewLight);
 	}
 
 	//Parse scene objects
-	mSceneObjects.reserve(Doc["object"]["count"].GetInt());
-	for (auto itr = Doc["objects"].MemberBegin(); itr != Doc["objects"].MemberEnd(); itr++)
+	for (rapidjson::SizeType i = 0; i < Doc["objects"].Size(); i++)
 	{
 		Primitive* NewObj;
-		if (itr->value["type"].GetString() == "sphere")
+		std::string Type = Doc["objects"][i]["type"].GetString();
+		if (Type == "sphere")
 		{
-			//TODO fix material
-			NewObj = new Sphere(vec3(itr->value["center"].GetString()), itr->value["radius"].GetDouble(), BRDF());
+			NewObj = new Sphere(
+				vec3(Doc["objects"][i]["center"].GetString()),
+				Doc["objects"][i]["radius"].GetDouble(),
+				*mMaterial.at(Doc["objects"][i]["material"].GetString()));
 		}
-		else if (itr->value["type"].GetString() == "triangle")
+		else if (Type == "triangle")
 		{
 			//TODO add triangle
 		}
@@ -151,4 +167,18 @@ bool Scene::Intersect(const Ray& aRay, aq_float *aT, Intersection* aIntersection
 		}
 	}
 	return intersect;
+}
+
+bool Scene::Intersect(const Ray & aRay)
+{
+	for (unsigned int i = 0; i < mSceneObjects.size(); i++)
+	{
+		aq_float tmpT;
+		Intersection tmpIntersection;
+		if (mSceneObjects[i]->Intersect(aRay, &tmpT, &tmpIntersection))
+		{
+			return true;
+		}
+	}
+	return false;
 }

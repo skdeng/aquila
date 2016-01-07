@@ -15,6 +15,8 @@ public:
 	void SetRenderer(SDL_Renderer* aRenderer);
 	void Save(const char* aFile);
 
+	void Bloom(double aThreshold);
+
 private:
 	inline uint32_t ColorToRGBA(const Color& aColor);
 

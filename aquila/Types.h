@@ -34,17 +34,12 @@ struct LocalGeo
 };
 
 //! Bidirectional reflectance distribution function
-/*!
-	Not actual BRDF function
-*/
 struct BRDF
 {
 	//! Diffuse
 	Color kd;
 	//! Specular
 	Color ks;
-	//! Ambient
-	Color ka;
 	//! Reflectance coefficient
 	Color kr;
 	
@@ -55,14 +50,13 @@ struct BRDF
 	aq_float RefractiveIndex;
 
 	BRDF(){}
-	BRDF(Color aKD, Color aKS, Color aKA, Color aKR, aq_float aHardness, aq_float aTransparency, aq_float aReflectiveIndex) :
+	BRDF(Color aKD, Color aKS, Color aKR, aq_float aHardness, aq_float aTransparency, aq_float aRefractiveIndex) :
 		kd(aKD),
-		ks(aKS), 
-		ka(aKA), 
+		ks(aKS),
 		kr(aKR), 
 		Hardness(aHardness),
 		Transparency(aTransparency),
-		RefractiveIndex(aReflectiveIndex)
+		RefractiveIndex(aRefractiveIndex)
 	{}
 };
 

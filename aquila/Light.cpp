@@ -69,6 +69,10 @@ void PointLight::GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* 
 
 	aLightRay->Dir = normalize(mPosition - aLocal.Pos);
 	aLightRay->Pos = aLocal.Pos;
-	aLightRay->TMax = ((mPosition - aLocal.Pos) / aLightRay->Dir).x;
+	aLightRay->TMax = ((mPosition - aLocal.Pos) / aLightRay->Dir).y;
+
+	if (aLightRay->TMax < 1)
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "problem", std::string((mPosition - aLocal.Pos) / aLightRay->Dir).c_str(), 0);
+
 	aLightRay->TMin = CONSTANT::RAY_MINIMUM;
 }
