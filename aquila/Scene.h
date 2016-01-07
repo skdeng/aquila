@@ -32,7 +32,42 @@ public:
 
 	void InitScene();
 	void InitScene(const char* aSceneFile);
-	bool Intersect(const Ray& aRay, aq_float *aT, Intersection* aIntersection);
+	bool Intersect(const Ray& aRay, aq_float *aT, Intersection* aIntersection)
+	{
+		bool intersect = false;
+
+		if (aT) *aT = std::numeric_limits<aq_float>::infinity();
+
+		//TODO use acceleration structure
+		for (unsigned int i = 0; i < mSceneObjects.size(); i++)
+		{
+			aq_float tmpT;
+			Intersection tmpIntersection;
+			if (mSceneObjects[i]->Intersect(aRay, &tmpT, &tmpIntersection))
+			{
+				if (aT)
+				{
+					if (tmpT < *aT)
+					{
+						*aT = tmpT;
+						if (aIntersection)
+						{
+							*aIntersection = tmpIntersection;
+						}
+					}
+				}
+				else
+				{
+					if (aIntersection)
+					{
+						*aIntersection = tmpIntersection;
+					}
+				}
+				intersect = true;
+			}
+		}
+		return intersect;
+	}
 	bool Intersect(const Ray& aRay);
 
 	const std::vector<Light*>& GetLights()

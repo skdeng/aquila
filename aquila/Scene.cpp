@@ -40,9 +40,9 @@ Scene::~Scene()
 
 void Scene::InitScene()
 {
-	mSceneObjects.push_back(new Plane(MATERIAL::SILVER, MATERIAL::BLUE_MATT));
-	mSceneObjects.push_back(new Sphere(vec3(0, 1, 0), 1.0, MATERIAL::GOLD));
-	mSceneObjects.push_back(new Sphere(vec3(2, 0.5, 0.5), 0.5, MATERIAL::MIRROR));
+	//mSceneObjects.push_back(new Plane(MATERIAL::SILVER, MATERIAL::BLUE_MATT));
+	mSceneObjects.push_back(new Sphere(vec3(0, 1, 0), 1.0, MATERIAL::WHITESTONE));
+	mSceneObjects.push_back(new Sphere(vec3(2, 0.5, 0.5), 0.5, MATERIAL::WHITESTONE));
 	//mSceneObjects.push_back(new Triangle(vec3(0.0, 0.5, 3), vec3(-2, 0.5, 3), vec3(-1, 2, 3), MATERIAL::GLASS));
 	//mLights.push_back(new DirectionalLight(Color(1.0, 1.0, 1.0), vec3(1, 1, -1), 1));
 	mLights.push_back(new PointLight(Color(1.0, 1.0, 1.0), vec3(6.0, 2.0, 10.0), 0.8));
@@ -130,43 +130,6 @@ void Scene::InitScene(const char* aSceneFile)
 		}
 		mSceneObjects.push_back(NewObj);
 	}
-}
-
-bool Scene::Intersect(const Ray& aRay, aq_float *aT, Intersection* aIntersection)
-{
-	bool intersect = false;
-
-	if (aT) *aT = std::numeric_limits<aq_float>::infinity();
-
-	//TODO use acceleration structure
-	for (unsigned int i = 0; i < mSceneObjects.size(); i++)
-	{
-		aq_float tmpT;
-		Intersection tmpIntersection;
-		if (mSceneObjects[i]->Intersect(aRay, &tmpT, &tmpIntersection))
-		{
-			if (aT)
-			{
-				if (tmpT < *aT)
-				{
-					*aT = tmpT;
-					if (aIntersection)
-					{
-						*aIntersection = tmpIntersection;
-					}
-				}
-			}
-			else
-			{
-				if (aIntersection)
-				{
-					*aIntersection = tmpIntersection;
-				}
-			}
-			intersect = true;
-		}
-	}
-	return intersect;
 }
 
 bool Scene::Intersect(const Ray & aRay)

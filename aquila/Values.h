@@ -32,43 +32,8 @@ namespace MATRIX
 
 namespace MATERIAL
 {
-	static const BRDF SILVER(
-		COLOR::SILVER,
-		COLOR::SILVER, 
-		0.5 * COLOR::WHITE, 
-		16,
-		0,
-		1);
-	static const BRDF BLUE_MATT(
-		1.0 * COLOR::BLUE, 
-		0.4 * COLOR::BLUE, 
-		COLOR::BLACK, 
-		12,
-		0,
-		1);
-	static const BRDF GOLD(
-		COLOR::GOLD, 
-		0.5 * COLOR::WHITE, 
-		0.2 * COLOR::WHITE,
-		16,
-		0,
-		1);
-	static const BRDF GLASS(
-		COLOR::SILVER,
-		COLOR::SILVER,
-		0.3 * COLOR::SILVER,
-		18,
-		0.8,
-		1.5
-		);
-	static const BRDF MIRROR(
-		COLOR::SILVER,
-		COLOR::SILVER,
-		COLOR::WHITE,
-		18,
-		0,
-		1
-		);
+	static const Material WHITESTONE(new Lambertian(COLOR::WHITE));
+	static const Material BLACKSTONE(new Lambertian(COLOR::WHITE * 0.1));
 }
 
 #endif
