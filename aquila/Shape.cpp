@@ -2,8 +2,9 @@
 
 #include "Main.h"
 
-Primitive::Primitive(const Material& aMaterial) : mMaterial(aMaterial)
+Primitive::Primitive()
 {
+
 }
 
 Primitive::~Primitive()
@@ -19,7 +20,7 @@ Primitive* Primitive::Transform(const Transformation& aM)
 
 //=================================================================================================
 
-Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const Material& aMaterial) : Primitive(aMaterial)
+Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const BRDF& aMaterial)
 {
 	mA = aA;
 	mB = aB;
@@ -30,6 +31,8 @@ Triangle::Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const Materia
 
 	mNormal = cross(mAC, mAB);
 	mNormal = normalize(mNormal);
+
+	mMaterial = aMaterial;
 }
 
 Triangle::~Triangle()
@@ -71,7 +74,7 @@ bool Triangle::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersect
 	{
 		aIntersection->Local.Pos = IntersectionPoint;
 		aIntersection->Local.Normal = mNormal;
-		aIntersection->Mat = mMaterial;
+		aIntersection->Material = mMaterial;
 		aIntersection->Object = this;
 	}
 
@@ -99,10 +102,11 @@ bool Triangle::Inside(const aq_float afX, const aq_float afY, const aq_float afZ
 
 //=================================================================================================
 
-Sphere::Sphere(const vec3& aCenter, const aq_float aRadius, const Material& aMaterial) : Primitive(aMaterial)
+Sphere::Sphere(const vec3& aCenter, const aq_float aRadius, const BRDF& aMaterial)
 {
 	mCenter = aCenter;
 	mRadius = aRadius;
+	mMaterial = aMaterial;
 }
 
 Sphere::~Sphere()
@@ -151,11 +155,11 @@ bool Sphere::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersectio
 		aIntersection->Local.Pos = aRay.Pos + tmpT * aRay.Dir;
 		aIntersection->Local.Normal = aIntersection->Local.Pos - mCenter;
 		aIntersection->Local.Normal = normalize(aIntersection->Local.Normal);
-		aIntersection->Mat = mMaterial;
+		aIntersection->Material = mMaterial;
 		if (Inside)
 		{
 			aIntersection->Local.Normal *= -1;
-			aIntersection->Mat.RefractiveIndex = 1.0 / aIntersection->Mat.RefractiveIndex;
+			aIntersection->Material.RefractiveIndex = 1.0 / aIntersection->Material.RefractiveIndex;
 		}
 	}
 
@@ -164,10 +168,11 @@ bool Sphere::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersectio
 
 //=================================================================================================
 
-Box::Box(const vec3& aMin, const vec3& aMax, const Material& aMaterial) : Primitive(aMaterial)
+Box::Box(const vec3& aMin, const vec3& aMax, const BRDF& aMaterial)
 {
 	mMin = aMin;
 	mMax = aMax;
+	mMaterial = aMaterial;
 }
 
 Box::~Box()
@@ -219,7 +224,7 @@ bool Box::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection)
 		if (aIntersection)
 		{
 			aIntersection->Object = this;
-			aIntersection->Mat = mMaterial;
+			aIntersection->Material = mMaterial;
 			aIntersection->Local.Pos = aRay + MaxTMin;
 			//TODO finish local
 		}
@@ -229,10 +234,12 @@ bool Box::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection)
 
 //=================================================================================================
 
-Plane::Plane(const Material& aMaterial1, const Material& aMaterial2) : Primitive(aMaterial1), mSecondaryMaterial(aMaterial2)
+Plane::Plane(const BRDF& aMaterial1, const BRDF& aMaterial2)
 {
 	mNormal = mM * vec3(0, 1, 0);
 	mOrigin = mM * vec3(0, 0, 0);
+	mMaterial = aMaterial1;
+	mSecondaryMaterial = aMaterial2;
 }
 
 Plane::~Plane()
@@ -268,9 +275,9 @@ bool Plane::Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection
 			aIntersection->Local.Pos = aRay + TmpT;
 
 			if (int(std::floor(aIntersection->Local.Pos.x) + std::floor(aIntersection->Local.Pos.z)) % 2 == 0)
-				aIntersection->Mat = mMaterial;
+				aIntersection->Material = mMaterial;
 			else
-				aIntersection->Mat = mSecondaryMaterial;
+				aIntersection->Material = mSecondaryMaterial;
 		}
 		return true;
 	}
