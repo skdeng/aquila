@@ -82,7 +82,6 @@
     <ClInclude Include="Equation.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Main.h" />
-    <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />

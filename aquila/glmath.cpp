@@ -143,6 +143,26 @@ double sum(const vec3& u)
 	return u.x + u.y + u.z;
 }
 
+vec3 exp(const vec3 & u)
+{
+	return vec3(std::exp(u.x), std::exp(u.y), std::exp(u.z));
+}
+
+vec3 pow(const vec3 & u, double a)
+{
+	return vec3(std::pow(u.x,a), std::pow(u.y,a), std::pow(u.z, a));
+}
+
+vec3 max(const vec3 u, double a)
+{
+	return vec3(std::max(u.x,a), std::max(u.y, a), std::max(u.z, a));
+}
+
+vec3 pow(const vec3 & u)
+{
+	return vec3();
+}
+
 // ----------------------------------------------------------------------------------------------------------------------------
 
 mat2x2::mat2x2()

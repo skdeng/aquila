@@ -2,7 +2,9 @@
 	"image_width":800,
 	"image_height":600,
 	"background_color":"0 0 0",
-	"primary_sample":4,
+	"primary_sample":1,
+	"shadow_ray":1,
+	"exposure":1.5,
 
 	"cam":
 	{
@@ -18,6 +20,7 @@
 			"diffuse":"0 0 0",
 			"specular":"0 0 0",
 			"reflectance":"0 0 0",
+			"emission":"0 0 0",
 			"hardness":32,
 			"transparency":0,
 			"refractive_index":0
@@ -26,7 +29,8 @@
 			"name":"white",
 			"diffuse":"1 1 1",
 			"specular":"0.4 0.4 0.4",
-			"reflectance":"0 0 0",
+			"reflectance":"0.2 0.2 0.2",
+			"emission":"0 0 0",
 			"hardness":32,
 			"transparency":0,
 			"refractive_index":0
@@ -36,6 +40,7 @@
 			"diffuse":"0 0 1",
 			"specular":"0.2 0.2 0.2",
 			"reflectance":"0 0 0",
+			"emission":"0 0 0",
 			"hardness":32,
 			"transparency":0,
 			"refractive_index":0
@@ -45,6 +50,7 @@
 			"diffuse":"0.72 0.45 0.2",
 			"specular":"0.5 0.5 0.5",
 			"reflectance":"0.3 0.3 0.3",
+			"emission":"0 0 0",
 			"hardness":8,
 			"transparency":0,
 			"refractive_index":0
@@ -54,6 +60,7 @@
 			"diffuse":"0.5 0 0",
 			"specular":"0.2 0.2 0.2",
 			"reflectance":"0.2 0.2 0.2",
+			"emission":"0 0 0",
 			"hardness":32,
 			"transparency":0,
 			"refractive_index":0
@@ -62,8 +69,19 @@
 			"name":"mirror",
 			"diffuse":"1 1 1",
 			"specular":"0.3 0.3 0.3",
-			"reflectance":"1 1 1",
+			"reflectance":"0 0 0",
+			"emission":"0 0 0",
 			"hardness":32,
+			"transparency":0.8,
+			"refractive_index":1.3
+		},
+		{
+			"name":"pink_gold",
+			"diffuse":"1 0.7137 0.75686",
+			"specular":"0.6 0.6 0.6",
+			"reflectance":"0.3 0.3 0.3",
+			"emission":"0 0 0",
+			"hardness":8,
 			"transparency":0,
 			"refractive_index":0
 		}
@@ -74,59 +92,72 @@
 		{
 			"type":"point",
 			"color":"1 1 1",
-			"pos":"1 1 5",
-			"intensity":1
+			"pos":"0 3.5 5",
+			"intensity":1,
+			"radius":2
 		}
 	],
 
 	"objects":
 	[
 		{
+			"name":"top",
 			"type":"sphere",
 			"center":"0 10004 0",
 			"radius":10000,
 			"material":"white"
 		},
 		{
+			"name":"bot",
 			"type":"sphere",
 			"center":"0 -10000 0",
 			"radius":10000,
 			"material":"white"
 		},
 		{
+			"name":"left",
 			"type":"sphere",
-			"center":"-10002 0 0",
+			"center":"-10003 0 0",
 			"radius":10000,
-			"material":"red"
+			"material":"white"
 		},
 		{
+			"name":"right",
 			"type":"sphere",
-			"center":"10002 0 0",
+			"center":"10003 0 0",
 			"radius":10000,
-			"material":"blue_matt"
+			"material":"white"
 		},
 		{
+			"name":"back",
 			"type":"sphere",
 			"center":"0 0 -10004",
 			"radius":10000,
 			"material":"white"
 		},
 		{
+			"name":"front",
 			"type":"sphere",
-			"center":"0 0 10015",
+			"center":"0 0 10010",
 			"radius":10000,
 			"material":"black"
 		},
 		{
 			"type":"sphere",
-			"center":"-0.7 1.3 1",
+			"center":"-0.7 1 1",
 			"radius":1,
 			"material":"gold"
 		},
 		{
 			"type":"sphere",
-			"center":"1 2 2",
+			"center":"1 0.5 2",
 			"radius":0.5,
+			"material":"pink_gold"
+		},
+		{
+			"type":"sphere",
+			"center":"1 2 -2",
+			"radius":0.8,
 			"material":"mirror"
 		}
 	]

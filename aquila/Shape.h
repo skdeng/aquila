@@ -17,7 +17,7 @@ public:
 protected:
 	//TODO use material for texture
 	Transformation mM;
-	BRDF mMaterial;
+	Material mMaterial;
 };
 
 //==================================================================================================
@@ -26,7 +26,7 @@ protected:
 class Triangle : public Primitive
 {
 public:
-	Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const BRDF& aMaterial);
+	Triangle(const vec3& aA, const vec3& aB, const vec3& aC, const Material& aMaterial);
 	~Triangle();
 
 	bool Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection);
@@ -65,7 +65,7 @@ private:
 class Sphere : public Primitive
 {
 public:
-	Sphere(const vec3& aCenter, const aq_float aRadius, const BRDF& aMaterial);
+	Sphere(const vec3& aCenter, const aq_float aRadius, const Material& aMaterial);
 	~Sphere();
 
 	bool Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection);
@@ -78,7 +78,7 @@ private:
 class Box : public Primitive
 {
 public:
-	Box(const vec3& aMin, const vec3& aMax, const BRDF& aMaterial);
+	Box(const vec3& aMin, const vec3& aMax, const Material& aMaterial);
 	~Box();
 
 	bool Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection);
@@ -92,14 +92,14 @@ private:
 class Plane : public Primitive
 {
 public:
-	Plane(const BRDF& aMaterial1, const BRDF& aMaterial2);
+	Plane(const Material& aMaterial1, const Material& aMaterial2);
 	~Plane();
 	bool Intersect(const Ray& aRay, aq_float* aT, Intersection* aIntersection);
 private:
 	vec3 mNormal;
 	vec3 mOrigin;
 
-	BRDF mSecondaryMaterial;
+	Material mSecondaryMaterial;
 };
 
 #endif

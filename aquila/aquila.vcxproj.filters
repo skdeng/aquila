@@ -60,9 +60,6 @@
     <ClInclude Include="Common.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>

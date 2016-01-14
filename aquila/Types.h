@@ -3,7 +3,6 @@
 
 #include "glmath.h"
 
-
 //! Precision of aq_floating number being used
 typedef double aq_float;
 
@@ -33,27 +32,30 @@ struct LocalGeo
 	vec3 Normal;
 };
 
-//! Bidirectional reflectance distribution function
-struct BRDF
+//! Material
+struct Material
 {
+	//! Emission
+	Color ke;
 	//! Diffuse
 	Color kd;
 	//! Specular
 	Color ks;
 	//! Reflectance coefficient
 	Color kr;
-	
+
 	//! Hardness for specular reflection
 	aq_float Hardness;
 	//! Transparency
 	aq_float Transparency;
 	aq_float RefractiveIndex;
 
-	BRDF(){}
-	BRDF(Color aKD, Color aKS, Color aKR, aq_float aHardness, aq_float aTransparency, aq_float aRefractiveIndex) :
+	Material() {}
+	Material(Color aKE, Color aKD, Color aKS, Color aKR, aq_float aHardness, aq_float aTransparency, aq_float aRefractiveIndex) :
+		ke(aKE),
 		kd(aKD),
 		ks(aKS),
-		kr(aKR), 
+		kr(aKR),
 		Hardness(aHardness),
 		Transparency(aTransparency),
 		RefractiveIndex(aRefractiveIndex)
@@ -64,7 +66,7 @@ struct BRDF
 struct Intersection
 {
 	LocalGeo Local;
-	BRDF Material;
+	Material Mat;
 	Primitive* Object = nullptr;
 	int RecusiveDepth = 0;
 };

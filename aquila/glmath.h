@@ -134,6 +134,9 @@ vec3 clamp(const vec3 &u, double min, double max);
 vec3 elemul(const vec3& u, const vec3& v);
 vec3 mix(const vec3& u, const vec3& v, const vec3& m);
 double sum(const vec3& u);
+vec3 exp(const vec3& u);
+vec3 pow(const vec3& u, double a);
+vec3 max(const vec3 u, double a);
 
 // ----------------------------------------------------------------------------------------------------------------------------
 

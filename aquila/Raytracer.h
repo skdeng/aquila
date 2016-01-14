@@ -14,11 +14,12 @@ public:
 	Raytracer();
 	~Raytracer();
 
-	void Trace(const Ray& aRay, Color* aColor);
+	void Trace(const Ray& aRay, Color* aColor, int aDepth = 0);
 	void SetScene(Scene* aScene);
 
 private:
 	Color Shade(const Ray& aRay, const Intersection& aIntersection, Light& aLight);
+	Color IndirectLighting(const Ray& aIncidentRay, const Intersection& aIntersection, int aDepth);
 
 private:
 	std::unique_ptr<Scene> mScene;

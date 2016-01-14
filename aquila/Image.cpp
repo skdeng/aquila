@@ -4,17 +4,28 @@ Image::Image(SDL_Renderer* aRenderer, const unsigned int aWidth, const unsigned 
 {
 	mWidth = aWidth;
 	mHeight = aHeight;
+	mImageSize = mWidth * mHeight;
 	mRenderer = aRenderer;
 	mTexture = SDL_CreateTexture(aRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, mWidth, mHeight);
+	mHDRBuffer = new Color[mWidth * mHeight];
+
+	mLuminanceBuffer = nullptr;
 }
 
 Image::~Image()
 {
 	SDL_DestroyTexture(mTexture);
+	delete[] mHDRBuffer;
+	if (mLuminanceBuffer != nullptr)
+		delete[] mLuminanceBuffer;
 }
 
-void Image::Commit(const Sample& aSample, const Color& aColor)
+void Image::Commit(const Sample& aSample, Color aColor, aq_float aExposure)
 {
+	mHDRBuffer[(int)aSample.y * mWidth + (int)aSample.x] = aColor;
+
+	aColor = Color(1.0) - exp(-aColor * aExposure);
+
 	SDL_Rect UpdateRect;
 	UpdateRect.x = (int)aSample.x;
 	UpdateRect.y = (int)aSample.y;
@@ -23,7 +34,7 @@ void Image::Commit(const Sample& aSample, const Color& aColor)
 
 	void* TexturePixels;
 	SDL_LockTexture(mTexture, &UpdateRect, &TexturePixels, &pitch);
-	*((uint32_t*)TexturePixels) = ColorToRGBA(aColor);
+	*((uint32_t*)TexturePixels) = ColorToRGBA(clamp(pow(aColor, 1.0/2.2), 0, 1));
 	SDL_UnlockTexture(mTexture);
 	SDL_RenderCopy(mRenderer, mTexture, &UpdateRect, &UpdateRect);
 }
@@ -54,24 +65,75 @@ void Image::Save(const char* aFile)
 	SDL_FreeSurface(SaveSurface);
 }
 
+void Image::HDR(double aExposure)
+{
+	const aq_float Gamma = 2.2;
+	
+	for (int i = 0; i < mImageSize; i++)
+	{
+		//exposure tone mapping
+		mHDRBuffer[i] = Color(1.0) - exp(-mHDRBuffer[i] * aExposure);
+	}
+}
+
 void Image::Bloom(double aThreshold)
 {
-	int r;
-	int g;
-	int b;
+	Color* BrightBuffer = new Color[mImageSize];
+	BrightPassFilter(BrightBuffer, aThreshold);
 
-	int luminance;
-	int luminanceData[3 * 256];
+	aq_float Weight[5] = { 0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216 };
 
-	// pre-computations for conversion from RGB to YCC
-	for (int i = 0; i < 3 * 256; i += 3)
+	//horizontal blur
+	for (int y = 0; y < mHeight; y++)
 	{
-		luminanceData[i] = (int)(i * 0.2125f);
-		luminanceData[i + 1] = (int)(i * 0.7154f);
-		luminanceData[i + 2] = (int)(i * 0.0721f);
+		for (int x = 0; x < mWidth; x++)
+		{
+			int p = y * mWidth + x;
+			for (int i = 0; i < 5; i++)
+			{
+				if (p + i < mImageSize)
+					mHDRBuffer[p] += Weight[i] * mHDRBuffer[p + i];
+				if (p - i > 0)
+					mHDRBuffer[p] += Weight[i] * mHDRBuffer[p - i];
+			}
+		}
 	}
 
-	//TODO finish bloom
+	//vertical blur
+	for (int y = 0; y < mHeight; y++)
+	{
+		for (int x = 0; x < mWidth; x++)
+		{
+			int p = y * mWidth + x;
+			for (int i = 0; i < 5; i++)
+			{
+				if ((p + mWidth * i) < mImageSize)
+					mHDRBuffer[p] += Weight[i] * mHDRBuffer[p + mWidth * i];
+				std::cout << p - mWidth * i << std::endl;
+				if ((p - mWidth * i) > 0)
+					mHDRBuffer[p] += Weight[i] * mHDRBuffer[p - mWidth * i];
+			}
+		}
+	}
+}
+
+void Image::Render()
+{
+	SDL_Rect UpdateRect;
+	UpdateRect.x = 0;
+	UpdateRect.y = 0;
+	UpdateRect.w = mWidth;
+	UpdateRect.h = mHeight;
+	int pitch;
+
+	void* TexturePixels;
+	SDL_LockTexture(mTexture, &UpdateRect, &TexturePixels, &pitch);
+	for (int i = 0; i < mImageSize; i++)
+	{
+		((uint32_t*)TexturePixels)[i] = ColorToRGBA(mHDRBuffer[i]);
+	}
+	SDL_UnlockTexture(mTexture);
+	SDL_RenderCopy(mRenderer, mTexture, &UpdateRect, &UpdateRect);
 }
 
 uint32_t Image::ColorToRGBA(const Color& aColor)
@@ -82,4 +144,30 @@ uint32_t Image::ColorToRGBA(const Color& aColor)
 	rgba += ((unsigned int)(aColor.b * 0xFF)) << 8;
 	rgba += 0xFF;
 	return rgba;
+}
+
+void Image::BrightPassFilter(Color * aBrightColorBuffer, double aThreshold)
+{
+	mLuminanceBuffer = new aq_float[mImageSize];
+	for (int y = 0; y < mHeight; y++)
+	{
+		for (int x = 0; x < mWidth; x++)
+		{
+			int p = y * mWidth + x;
+			mLuminanceBuffer[p] = 0.2126 *  mHDRBuffer[p].x + 0.7152 * mHDRBuffer[p].y + 0.0722 * mHDRBuffer[p].z;
+		}
+	}
+
+	for (int y = 0; y < mHeight; y++)
+	{
+		for (int x = 0; x < mWidth; x++)
+		{
+			int p = y * mWidth + x;
+			aBrightColorBuffer[p] = mHDRBuffer[p] * mMiddleGrey / (mLuminanceBuffer[p] + 0.001);
+			aBrightColorBuffer[p] *= (1.0 + (aBrightColorBuffer[p] / (aThreshold * aThreshold)));
+			aBrightColorBuffer[p] -= 5.0;
+			aBrightColorBuffer[p] = max(aBrightColorBuffer[p], 0.0);
+			aBrightColorBuffer[p] /= (10.0 + aBrightColorBuffer[p]);
+		}
+	}
 }

@@ -18,6 +18,9 @@ public:
 		Color BackgroundColor = COLOR::BLACK;
 
 		int PrimarySample = 4;
+		int ShadowRay = 16;
+
+		aq_float Exposure = 1.0;
 
 		vec3 CameraPos = vec3(1.0, 2.0, 10.0);
 		vec3 CameraDir = vec3(0.0, -2.0, -10.0);
@@ -46,7 +49,7 @@ public:
 private:
 	std::vector<Primitive*> mSceneObjects;
 	std::vector<Light*> mLights;
-	std::unordered_map<std::string, BRDF*> mMaterial;
+	std::unordered_map<std::string, Material*> mMaterial;
 
 	Prop mProperties;
 };

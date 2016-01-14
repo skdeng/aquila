@@ -2,6 +2,7 @@
 #define _AQUILA_LIGHT_H_
 
 #include "Common.h"
+#include "Shape.h"
 
 class Light
 {
@@ -10,14 +11,14 @@ public:
 	{
 		DIRECTIONAL,
 		POINT,
-		GENERIC_LIGHT
+		SPHERE
 	};
 
 	Light();
 	virtual ~Light();
 
 	virtual void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor) = 0;
-	virtual const LightType GetType() = 0;
+	virtual LightType GetType() = 0;
 
 protected:
 	vec3 mColor;
@@ -32,7 +33,7 @@ public:
 	~DirectionalLight();
 
 	void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor);
-	const LightType GetType()
+	LightType GetType()
 	{
 		return DIRECTIONAL;
 	}
@@ -47,18 +48,31 @@ public:
 	PointLight(const Color& aColor, const vec3& aPosition, const aq_float aIntensity);
 	~PointLight();
 
-	void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor);
-	const LightType GetType()
+	virtual void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor);
+	LightType GetType()
 	{
 		return POINT;
 	}
-private:
+protected:
 	static const aq_float ConstantAttenuation;
 	static const aq_float LinearAttenuation;
 	static const aq_float QuadraticAttenuation;
 
 	vec3 mPosition;
+};
 
+class SphereLight : public PointLight
+{
+public:
+	SphereLight(const Color& aColor, const vec3& aPosition, const aq_float aRadius, const aq_float aIntensity);
+	void GenerateLightRay(const LocalGeo& aLocal, Ray* aLightRay, vec3* aLightColor);
+
+	LightType GetType()
+	{
+		return SPHERE;
+	}
+private:
+	aq_float mRadius;
 };
 
 #endif

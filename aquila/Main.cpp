@@ -116,7 +116,7 @@ void Main::OnUpdate()
 		}
 	}
 	mPixelColor /= mScene.Properties.PrimarySample * mScene.Properties.PrimarySample;
-	mImage->Commit(mSample, mPixelColor);
+	mImage->Commit(mSample, mPixelColor, mScene.Properties.Exposure);
 }
 
 void Main::OnRender()

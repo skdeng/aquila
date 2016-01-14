@@ -77,6 +77,8 @@ void Scene::InitScene(const char* aSceneFile)
 	mProperties.ImageHeight = Doc["image_height"].GetInt();
 	mProperties.BackgroundColor = Color(Doc["background_color"].GetString());
 	mProperties.PrimarySample = Doc["primary_sample"].GetInt();
+	mProperties.ShadowRay = Doc["shadow_ray"].GetInt();
+	mProperties.Exposure = Doc["exposure"].GetDouble();
 
 	mProperties.CameraPos = vec3(Doc["cam"]["pos"].GetString());
 	mProperties.CameraDir = vec3(Doc["cam"]["dir"].GetString());
@@ -85,7 +87,8 @@ void Scene::InitScene(const char* aSceneFile)
 	//Parse materials
 	for (rapidjson::SizeType i = 0; i < Doc["materials"].Size(); i++)
 	{
-		BRDF* Mat = new BRDF(
+		Material* Mat = new Material(
+			Color(Doc["materials"][i]["emission"].GetString()),
 			Color(Doc["materials"][i]["diffuse"].GetString()),
 			Color(Doc["materials"][i]["specular"].GetString()),
 			Color(Doc["materials"][i]["reflectance"].GetString()),
@@ -108,6 +111,10 @@ void Scene::InitScene(const char* aSceneFile)
 		else if (Type == "point")
 		{
 			NewLight = new PointLight(Color(Doc["lights"][i]["color"].GetString()), Color(Doc["lights"][i]["pos"].GetString()), Doc["lights"][i]["intensity"].GetDouble());
+		}
+		else if (Type == "sphere")
+		{
+			NewLight = new SphereLight(Color(Doc["lights"][i]["color"].GetString()), Color(Doc["lights"][i]["pos"].GetString()), Doc["lights"][i]["radius"].GetDouble(), Doc["lights"][i]["intensity"].GetDouble());
 		}
 		mLights.push_back(NewLight);
 	}

@@ -32,28 +32,32 @@ namespace MATRIX
 
 namespace MATERIAL
 {
-	static const BRDF SILVER(
+	static const Material SILVER(
+		COLOR::BLACK,
 		COLOR::SILVER,
 		COLOR::SILVER, 
 		0.5 * COLOR::WHITE, 
 		16,
 		0,
 		1);
-	static const BRDF BLUE_MATT(
+	static const Material BLUE_MATT(
+		COLOR::BLACK,
 		1.0 * COLOR::BLUE, 
 		0.4 * COLOR::BLUE, 
 		COLOR::BLACK, 
 		12,
 		0,
 		1);
-	static const BRDF GOLD(
+	static const Material GOLD(
+		COLOR::BLACK,
 		COLOR::GOLD, 
 		0.5 * COLOR::WHITE, 
 		0.2 * COLOR::WHITE,
 		16,
 		0,
 		1);
-	static const BRDF GLASS(
+	static const Material GLASS(
+		COLOR::BLACK,
 		COLOR::SILVER,
 		COLOR::SILVER,
 		0.3 * COLOR::SILVER,
@@ -61,10 +65,20 @@ namespace MATERIAL
 		0.8,
 		1.5
 		);
-	static const BRDF MIRROR(
+	static const Material MIRROR(
+		COLOR::BLACK,
 		COLOR::SILVER,
 		COLOR::SILVER,
 		COLOR::WHITE,
+		18,
+		0,
+		1
+		);
+	static const Material LIGHT(
+		0.8 * COLOR::WHITE,
+		COLOR::BLACK,
+		COLOR::BLACK,
+		COLOR::BLACK,
 		18,
 		0,
 		1
