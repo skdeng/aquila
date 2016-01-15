@@ -83,6 +83,7 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Pathtracer.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Utils.h" />
@@ -103,6 +104,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Pathtracer.cpp" />
     <ClCompile Include="Raytracer.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="Scene.cpp" />

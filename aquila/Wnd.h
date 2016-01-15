@@ -9,7 +9,6 @@ class Wnd
 {
 public:
 	Wnd(const Image* aImage);
-	Wnd(WNDPROC aWndProc);
 	void SetCallBack(WNDPROC aWndProc);
 
 	bool Create(HINSTANCE hInstance, std::string aWindowName, int aWidth, int aHeight);
@@ -34,5 +33,8 @@ private:
 	int mWidth, mHeight, mX, mY, mLastX, mLastY;
 	WNDPROC mWndProc;
 };
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR sCmdLine, int iShow);
 
 #endif

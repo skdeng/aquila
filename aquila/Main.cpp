@@ -124,7 +124,10 @@ void Main::OnRender()
 	SDL_RenderPresent(mRenderer);
 }
 
+#include <Windows.h>
+
 int main(int argc, char** argv)
 {
+	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 	return Main::Instance.Execute();
 }

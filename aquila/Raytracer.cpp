@@ -1,14 +1,5 @@
 #include "Raytracer.h"
 
-bool refract(const vec3& i, const vec3& n, double ior_ratio, vec3& r) {
-	auto cos_i = dot(-1 * i, n);
-	auto cos_t2 = ((double)1) - ior_ratio * ior_ratio *  (((double)1) - cos_i * cos_i);
-	if (cos_t2 <= 0)
-		return false;
-	r = ior_ratio * i + ((ior_ratio * cos_i - sqrt(abs(cos_t2))) * n);
-	return true;
-}
-
 Raytracer::Raytracer()
 {
 }

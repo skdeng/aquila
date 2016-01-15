@@ -84,6 +84,9 @@
     <ClInclude Include="Equation.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="Pathtracer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glmath.cpp">
@@ -123,6 +126,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Equation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pathtracer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
