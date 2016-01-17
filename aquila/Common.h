@@ -13,6 +13,11 @@
 #include <algorithm>
 #include <cmath>
 
+#include <Windows.h>
+
+#undef max
+#undef min
+
 #define AQ_DEBUG
 
 #ifdef AQ_DEBUG

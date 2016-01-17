@@ -26,7 +26,7 @@ public:
 		vec3 CameraDir = vec3(0.0, -2.0, -10.0);
 		vec3 CameraUp = vec3(0.0, 1.0, 0.0);
 
-		int RecursiveDepth = 16;
+		int RecursiveDepth = 4;
 	};
 
 public:

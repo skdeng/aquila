@@ -3,6 +3,7 @@
 
 #include "Common.h"
 #include "Raytracer.h"
+#include "Pathtracer.h"
 #include "Camera.h"
 #include "Sampler.h"
 #include "Image.h"
@@ -34,9 +35,12 @@ private:
 	Ray mEyeRay;
 	std::unique_ptr<Camera> mCamera;
 	Raytracer mRaytracer;
+	Pathtracer mPathtracer;
 	Scene mScene;
 	Color mPixelColor;
 	std::unique_ptr<Image> mImage;
+
+	int mUpdateCycle;
 };
 
 #endif

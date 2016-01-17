@@ -5,9 +5,8 @@
 #include "Values.h"
 
 //! Ray defined as Origin + t * Direction for TMin <= t < TMax
-class Ray
+struct Ray
 {
-public:
 	vec3 Pos;
 	vec3 Dir;
 	aq_float TMax, TMin;

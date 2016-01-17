@@ -7,6 +7,8 @@ Main::Main()
 	mRunning = true;
 	mRenderer = nullptr;
 	mWindow = nullptr;
+
+	mUpdateCycle = 1;
 }
 
 Main::~Main()
@@ -28,7 +30,7 @@ int Main::Execute()
 
 	SDL_Event e;
 
-	while (mRunning && mSampler->GetSample(&mSample))
+	while (mRunning)
 	{
 		while (SDL_PollEvent(&e))
 		{
@@ -80,7 +82,7 @@ bool Main::SetupSDL()
 
 bool Main::OnInit()
 {
-	mScene.InitScene("scene1.json");
+	mScene.InitScene("cornell.json");
 
 	if (!SetupSDL())
 		return false;
@@ -88,6 +90,7 @@ bool Main::OnInit()
 	mSampler = std::make_unique<Sampler>(mScene.Properties.ImageWidth, mScene.Properties.ImageHeight);
 	mCamera = std::make_unique<Camera>(mScene.Properties.CameraPos, mScene.Properties.CameraDir, mScene.Properties.CameraUp, 45.0, mScene.Properties.ImageWidth, mScene.Properties.ImageHeight);
 	mRaytracer.SetScene(&mScene);
+	mPathtracer.SetScene(&mScene);
 	mImage = std::make_unique<Image>(mRenderer, mScene.Properties.ImageWidth, mScene.Properties.ImageHeight);
 
 	return true;
@@ -100,6 +103,8 @@ void Main::OnEvent(const SDL_Event& e)
 
 void Main::OnUpdate()
 {
+	if (!mSampler->GetSample(&mSample))
+		mUpdateCycle++;
 	mPixelColor = COLOR::BLACK;
 	Color TempColor;
 	aq_float Offset = 1.0 / (mScene.Properties.PrimarySample + 1.0);
@@ -111,12 +116,15 @@ void Main::OnUpdate()
 			double offY = j * Offset - 0.5;
 
 			mCamera->GetRay(mSample, &mEyeRay, offX, offY);
-			mRaytracer.Trace(mEyeRay, &TempColor);
+			//mRaytracer.Trace(mEyeRay, &TempColor);
+			TempColor = mPathtracer.Trace(mEyeRay);
 			mPixelColor += TempColor;
 		}
 	}
 	mPixelColor /= mScene.Properties.PrimarySample * mScene.Properties.PrimarySample;
-	mImage->Commit(mSample, mPixelColor, mScene.Properties.Exposure);
+	aq_float PixelColorWeight = 1.0 / mUpdateCycle;
+	std::cout << std::string(mSample) << PixelColorWeight << std::endl;
+	mImage->Commit(mSample, mPixelColor, PixelColorWeight,  mScene.Properties.Exposure);
 }
 
 void Main::OnRender()
@@ -131,3 +139,4 @@ int main(int argc, char** argv)
 	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 	return Main::Instance.Execute();
 }
+

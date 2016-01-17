@@ -20,7 +20,7 @@ Image::~Image()
 		delete[] mLuminanceBuffer;
 }
 
-void Image::Commit(const Sample& aSample, Color aColor, aq_float aExposure)
+void Image::Commit(const Sample& aSample, Color aColor, aq_float aRatio, aq_float aExposure)
 {
 	mHDRBuffer[(int)aSample.y * mWidth + (int)aSample.x] = aColor;
 
@@ -34,7 +34,8 @@ void Image::Commit(const Sample& aSample, Color aColor, aq_float aExposure)
 
 	void* TexturePixels;
 	SDL_LockTexture(mTexture, &UpdateRect, &TexturePixels, &pitch);
-	*((uint32_t*)TexturePixels) = ColorToRGBA(clamp(pow(aColor, 1.0/2.2), 0, 1));
+	Color BlendedColor = mix(RGBAToColor(*(uint32_t*)TexturePixels), aColor, aRatio);
+	*((uint32_t*)TexturePixels) = ColorToRGBA(clamp(pow(BlendedColor, 1.0/2.2), 0, 1));
 	SDL_UnlockTexture(mTexture);
 	SDL_RenderCopy(mRenderer, mTexture, &UpdateRect, &UpdateRect);
 }
@@ -146,9 +147,19 @@ uint32_t Image::ColorToRGBA(const Color& aColor)
 	return rgba;
 }
 
+inline Color Image::RGBAToColor(const uint32_t aRGBA)
+{
+	Color C;
+	C.x = 0xFF & (aRGBA >> 24);
+	C.y = 0xFF & (aRGBA >> 16);
+	C.z = 0xFF & (aRGBA >> 8);
+	return Color();
+}
+
 void Image::BrightPassFilter(Color * aBrightColorBuffer, double aThreshold)
 {
-	mLuminanceBuffer = new aq_float[mImageSize];
+	if (mLuminanceBuffer == nullptr)
+		mLuminanceBuffer = new aq_float[mImageSize];
 	for (int y = 0; y < mHeight; y++)
 	{
 		for (int x = 0; x < mWidth; x++)

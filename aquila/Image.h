@@ -11,7 +11,7 @@ public:
 	Image(SDL_Renderer* aRenderer, const unsigned int aWidth, const unsigned int aHeight);
 	~Image();
 
-	void Commit(const Sample& aSample, Color aColor, aq_float aExposure = 1.0);
+	void Commit(const Sample& aSample, Color aColor, aq_float aRatio, aq_float aExposure);
 	void SetRenderer(SDL_Renderer* aRenderer);
 	void Save(const char* aFile);
 
@@ -23,6 +23,7 @@ public:
 
 private:
 	inline uint32_t ColorToRGBA(const Color& aColor);
+	inline Color RGBAToColor(const uint32_t aRGBA);
 	void BrightPassFilter(Color* aBrightColorBuffer, double aThreshold);
 
 private:
